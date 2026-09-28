@@ -17,5 +17,6 @@ class ProjectMemberResponse(BaseModel):
     project_id: int
     user_id: int
     role: str
+    name: str
 
     model_config = ConfigDict(from_attributes=True)

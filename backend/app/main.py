@@ -6,6 +6,7 @@ from app.api.routes.project_members import router as project_members_router
 from app.api.routes.tasks import router as tasks_router
 from app.api.routes.comments import router as comments_router
 from app.api.routes.notifications import router as notifications_router
+from fastapi.middleware.cors import CORSMiddleware
 
 # Cria a instância principal da aplicação FastAPI.
 app = FastAPI(
@@ -13,6 +14,18 @@ app = FastAPI(
     description="API para gerenciamento de projetos e tarefas.",
     version=settings.app_version,
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(auth_router)
 app.include_router(projects_router)
 app.include_router(project_members_router)

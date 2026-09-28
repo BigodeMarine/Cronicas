@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.models.project_member import ProjectMember
 from app.models.notification import Notification
 from app.models.project import Project
+from app.models.user import User
 
 """
 Busca um membro específico dentro de um projeto.
@@ -53,18 +54,30 @@ def add_project_member(
     return member
 
 """
-Retorna todos os membros de um projeto.
+Retorna todos os membros de um projeto junto com o nome do usuário.
 """
 def get_project_members(
     db: Session,
     project_id: int,
-) -> list[ProjectMember]:
-    
-    return (
-        db.query(ProjectMember)
+) -> list[dict]:
+
+    members = (
+        db.query(ProjectMember, User.name)
+        .join(User, User.id == ProjectMember.user_id)
         .filter(ProjectMember.project_id == project_id)
         .all()
     )
+
+    return [
+        {
+            "id": member.id,
+            "project_id": member.project_id,
+            "user_id": member.user_id,
+            "name": name,
+            "role": member.role,
+        }
+        for member, name in members
+    ]
 
 """
 Remove um usuário de um projeto.
