@@ -1,0 +1,1 @@
+"O projeto começou focado no desenvolvimento de uma ferramenta estilo Trello. No entanto, por falta de engajamento com a ideia inicial, decidi pivotar o escopo para um diário de RPG. Atualmente, a aplicação está passando por uma refatoração completa."
