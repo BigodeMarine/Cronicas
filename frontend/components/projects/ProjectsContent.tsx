@@ -1,4 +1,6 @@
 "use client";
+import styles from "@/styles/Ui.module.css";
+
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { request, type Campaign, type CurrentUser } from '@/services/journal';
@@ -39,18 +41,18 @@ export default function ProjectsContent() {
   }
   if (loading) return <p>Carregando suas campanhas…</p>;
   return <>
-    {error && <div role="alert" className="login-error">{error} {!user && <Link href="/login">Entrar</Link>}</div>}
-    <div className="projects-toolbar"><p>{campaigns.length} campanhas · suas mesas, suas histórias</p><button className="primary-button" disabled={busy || !user} onClick={() => { setEditing(null); setShowForm(true); }}>+ Nova campanha</button></div>
-    {showForm && <section className="project-form-card"><h3>{editing ? 'Editar campanha' : 'Uma nova aventura'}</h3><form className="project-form" key={editing?.id ?? 'new'} onSubmit={submit}>
-      <div className="form-field"><label htmlFor="campaign-name">Nome da campanha</label><input id="campaign-name" name="name" required minLength={2} maxLength={150} defaultValue={editing?.name} /></div>
-      <div className="form-field"><label htmlFor="campaign-system">Sistema de RPG</label><input id="campaign-system" name="system" maxLength={100} placeholder="Ex.: D&D 5e, Tormenta20" defaultValue={editing?.system} /></div>
-      <div className="form-field"><label htmlFor="campaign-description">Cenário e premissa</label><textarea id="campaign-description" name="description" rows={4} maxLength={10000} defaultValue={editing?.description ?? ''} /></div>
-      <div className="project-form-actions"><button className="secondary-button" type="button" disabled={busy} onClick={() => setShowForm(false)}>Cancelar</button><button className="primary-button" disabled={busy}>{busy ? 'Salvando…' : 'Salvar campanha'}</button></div>
+    {error && <div role="alert" className={styles['login-error']}>{error} {!user && <Link href="/login">Entrar</Link>}</div>}
+    <div className={styles['projects-toolbar']}><p>{campaigns.length} campanhas · suas mesas, suas histórias</p><button className={styles['primary-button']} disabled={busy || !user} onClick={() => { setEditing(null); setShowForm(true); }}>+ Nova campanha</button></div>
+    {showForm && <section className={styles['project-form-card']}><h3>{editing ? 'Editar campanha' : 'Uma nova aventura'}</h3><form className={styles['project-form']} key={editing?.id ?? 'new'} onSubmit={submit}>
+      <div className={styles['form-field']}><label htmlFor="campaign-name">Nome da campanha</label><input id="campaign-name" name="name" required minLength={2} maxLength={150} defaultValue={editing?.name} /></div>
+      <div className={styles['form-field']}><label htmlFor="campaign-system">Sistema de RPG</label><input id="campaign-system" name="system" maxLength={100} placeholder="Ex.: D&D 5e, Tormenta20" defaultValue={editing?.system} /></div>
+      <div className={styles['form-field']}><label htmlFor="campaign-description">Cenário e premissa</label><textarea id="campaign-description" name="description" rows={4} maxLength={10000} defaultValue={editing?.description ?? ''} /></div>
+      <div className={styles['project-form-actions']}><button className={styles['secondary-button']} type="button" disabled={busy} onClick={() => setShowForm(false)}>Cancelar</button><button className={styles['primary-button']} disabled={busy}>{busy ? 'Salvando…' : 'Salvar campanha'}</button></div>
     </form></section>}
-    {!campaigns.length && <div className="empty-state"><h3>Seu diário começa com uma campanha</h3><p>Crie uma mesa e adicione jogadores para escreverem a história juntos.</p></div>}
-    <section className="projects-grid">{campaigns.map(c => <article className="project-card" key={c.id}>
-      <div className="project-card-content"><span className="journal-eyebrow">{c.system || 'Sistema livre'} · {c.owner_id === user?.id ? 'Mestre' : 'Jogador'}</span><h3>{c.name}</h3><p>{c.description || 'Uma história esperando para ser contada.'}</p></div>
-      <div className="project-card-actions"><Link className="primary-button" href={`/journal?campaignId=${c.id}`}>Abrir diário</Link>{c.owner_id === user?.id && <><button className="project-action-button" disabled={busy} onClick={() => { setEditing(c); setShowForm(true); }}>Editar</button><button className="project-action-button project-delete-button" disabled={busy} onClick={() => remove(c)}>Excluir</button></>}</div>
+    {!campaigns.length && <div className={styles['empty-state']}><h3>Seu diário começa com uma campanha</h3><p>Crie uma mesa e adicione jogadores para escreverem a história juntos.</p></div>}
+    <section className={styles['projects-grid']}>{campaigns.map(c => <article className={styles['project-card']} key={c.id}>
+      <div className={styles['project-card-content']}><span className={styles['journal-eyebrow']}>{c.system || 'Sistema livre'} · {c.owner_id === user?.id ? 'Mestre' : 'Jogador'}</span><h3>{c.name}</h3><p>{c.description || 'Uma história esperando para ser contada.'}</p></div>
+      <div className={styles['project-card-actions']}><Link className={styles['primary-button']} href={`/journal?campaignId=${c.id}`}>Abrir diário</Link>{c.owner_id === user?.id && <><button className={styles['project-action-button']} disabled={busy} onClick={() => { setEditing(c); setShowForm(true); }}>Editar</button><button className={[styles['project-action-button'], styles['project-delete-button']].join(" ")} disabled={busy} onClick={() => remove(c)}>Excluir</button></>}</div>
     </article>)}</section>
   </>;
 }

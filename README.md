@@ -35,3 +35,9 @@ Para contas novas, o nome de autoria é gerado a partir da parte do e-mail antes
 Em `backend`: `poetry run python -m pytest -q tests`. Os testes usam banco SQLite isolado, com chaves estrangeiras habilitadas, e exercitam autenticação real, participação, moderação e isolamento entre campanhas; não alteram o banco de desenvolvimento. As migrações devem ser aplicadas também ao PostgreSQL.
 
 Em `frontend`: `npm run build` valida a compilação e TypeScript; `npm run lint` verifica as regras React. Existem erros anteriores em `components/tasks/TasksContent.tsx`, da tela legada de tarefas.
+
+## Estilos e tipografia
+
+`frontend/app/globals.css` contém somente tokens de cores, tipografia, espaçamento e sombras. O reset está em `styles/Base.module.css`; controles compartilhados em `styles/Ui.module.css`; capa/autenticação e encadernação do diário têm seus próprios CSS Modules em `components/book`. Componentes usam classes locais, sem seletores globais para as telas.
+
+A escala usa o Portfolio de BigodeMarine como referência: descrições em 1,3rem, formulários/ações em 1,125rem, textos secundários em 1rem e títulos responsivos. A capa é um grimório com couro verde escuro, cantoneiras, fechos e um D20 vetorial, sem depender de serviços externos de imagem ou fontes. A abertura e a virada de página respeitam a preferência por movimento reduzido.

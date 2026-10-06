@@ -1,4 +1,7 @@
 "use client";
+import styles from "./BookEntrance.module.css";
+import { classNames } from "@/styles/classNames";
+
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,12 +13,10 @@ type Mode = "login" | "register";
 
 export function BookSigil({ className = "" }: { className?: string }) {
   return <svg className={className} viewBox="0 0 160 160" fill="none" aria-hidden="true">
-    <circle cx="80" cy="80" r="65" stroke="currentColor" strokeWidth=".7" />
-    <circle cx="80" cy="80" r="55" stroke="currentColor" strokeWidth=".7" strokeDasharray="2 7" />
-    <path d="M80 12 98 62 148 80 98 98 80 148 62 98 12 80 62 62Z" stroke="currentColor" />
-    <path d="m80 37 30 43-30 43-30-43Z" stroke="currentColor" />
-    <path d="M80 37v86M50 80h60M80 37 50 80l30 13 30-13-30-43Z" stroke="currentColor" />
-    <circle cx="80" cy="80" r="5" fill="currentColor" />
+    <path d="M80 9 143 44v72L80 151 17 116V44Z" fill="currentColor" fillOpacity=".06" stroke="currentColor" strokeWidth="2" />
+    <path d="M80 9v35L17 44l28 62-28 10 63 35 35-45 28 10-28-10 28-62-63 0 35 62H45l35-62Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M80 151v-45M17 44l63-35 63 35M45 106l35 45" stroke="currentColor" strokeWidth="1.5" />
+    <text x="80" y="89" textAnchor="middle" fill="currentColor" fontFamily="Georgia, serif" fontSize="26">20</text>
   </svg>;
 }
 
@@ -82,53 +83,60 @@ export default function BookEntrance({ initialMode, initiallyOpen = false }: { i
     emailRef.current?.focus();
   }
 
-  return <main className={`book-scene phase-${phase}`}>
-    <div className="book-ambient" aria-hidden="true" />
-    <p className="book-scene-caption">Uma mesa. Muitas vozes. Uma história.</p>
-    <p className="book-live-status" role="status">{phase === "opening" ? "O diário está abrindo." : phase === "turning" ? notice : ""}</p>
-    <div className={`entrance-book ${opened ? "is-open" : ""}`}>
-      <section className="auth-spread" aria-label="Primeiras páginas do diário" inert={phase !== "open"}>
-        <div className="auth-page auth-dedication">
-          <span className="book-page-kicker">O início de uma crônica</span>
-          <BookSigil className="dedication-sigil" />
+  return <main data-phase={phase} className={classNames(styles, `book-scene phase-${phase}`)}>
+    <div className={styles['book-ambient']} aria-hidden="true" />
+    <p className={styles['book-scene-caption']}>Uma mesa. Muitas vozes. Uma história.</p>
+    <p className={styles['book-live-status']} role="status">{phase === "opening" ? "O diário está abrindo." : phase === "turning" ? notice : ""}</p>
+    <div className={classNames(styles, `entrance-book ${opened ? "is-open" : ""}`)}>
+      <section className={styles['auth-spread']} aria-label="Primeiras páginas do diário" inert={phase !== "open"}>
+        <div className={[styles['auth-page'], styles['auth-dedication']].join(" ")}>
+          <span className={styles['book-page-kicker']}>O início de uma crônica</span>
+          <BookSigil className={styles['dedication-sigil']} />
           <h1>Toda aventura<br />merece ser<br /><em>lembrada.</em></h1>
-          <div className="book-ornament" aria-hidden="true">✦</div>
+          <div className={styles['book-ornament']} aria-hidden="true">✦</div>
           <p>As histórias do mestre.<br />As memórias dos jogadores.<br />Um diário para toda a mesa.</p>
-          <span className="book-folio">I</span>
+          <span className={styles['book-folio']}>I</span>
         </div>
-        <div className="auth-page auth-form-page">
-          <div className="book-auth-tabs" aria-label="Acesso ao diário">
+        <div className={[styles['auth-page'], styles['auth-form-page']].join(" ")}>
+          <div className={styles['book-auth-tabs']} aria-label="Acesso ao diário">
             <button type="button" aria-pressed={mode === "login"} onClick={() => changeMode("login")} disabled={busy}>Entrar</button>
             <button type="button" aria-pressed={mode === "register"} onClick={() => changeMode("register")} disabled={busy}>Criar conta</button>
           </div>
-          <span className="book-page-kicker">{mode === "login" ? "Retome sua jornada" : "Uma nova voz na mesa"}</span>
+          <span className={styles['book-page-kicker']}>{mode === "login" ? "Retome sua jornada" : "Uma nova voz na mesa"}</span>
           <h2>{mode === "login" ? "Abra suas crônicas" : "Comece sua história"}</h2>
-          <p className="book-auth-description">{mode === "login" ? "Suas aventuras esperam na próxima página." : "Só precisamos do seu e-mail e de uma senha."}</p>
-          <form className="book-auth-form" onSubmit={submit}>
+          <p className={styles['book-auth-description']}>{mode === "login" ? "Suas aventuras esperam na próxima página." : "Só precisamos do seu e-mail e de uma senha."}</p>
+          <form className={styles['book-auth-form']} onSubmit={submit}>
             <label htmlFor="book-email">E-mail</label>
             <input ref={emailRef} id="book-email" name="email" type="email" placeholder="seu@email.com" autoComplete="email" required disabled={busy} />
             <label htmlFor="book-password">Senha</label>
             <input id="book-password" name="password" type="password" placeholder={mode === "register" ? "Pelo menos 8 caracteres" : "Sua senha"} autoComplete={mode === "register" ? "new-password" : "current-password"} minLength={mode === "register" ? 8 : undefined} maxLength={128} required disabled={busy} />
-            {error && <p className="book-auth-error" role="alert">{error}</p>}
-            {notice && <p className="book-auth-notice" role="status">{notice}</p>}
-            <button className="book-submit" disabled={busy}>{busy ? "Abrindo o diário…" : mode === "login" ? "Entrar no diário" : "Criar conta e abrir o diário"}<span aria-hidden="true">→</span></button>
+            {error && <p className={styles['book-auth-error']} role="alert">{error}</p>}
+            {notice && <p className={styles['book-auth-notice']} role="status">{notice}</p>}
+            <button className={styles['book-submit']} disabled={busy}>{busy ? "Abrindo o diário…" : mode === "login" ? "Entrar no diário" : "Criar conta e abrir o diário"}<span aria-hidden="true">→</span></button>
           </form>
-          <p className="book-auth-footnote">{mode === "login" ? "Ainda não faz parte desta história?" : "Já tem histórias por aqui?"} <button type="button" onClick={() => changeMode(mode === "login" ? "register" : "login")} disabled={busy}>{mode === "login" ? "Criar conta" : "Entrar"}</button></p>
-          <span className="book-folio">II</span>
+          <p className={styles['book-auth-footnote']}>{mode === "login" ? "Ainda não faz parte desta história?" : "Já tem histórias por aqui?"} <button type="button" onClick={() => changeMode(mode === "login" ? "register" : "login")} disabled={busy}>{mode === "login" ? "Criar conta" : "Entrar"}</button></p>
+          <span className={styles['book-folio']}>II</span>
         </div>
       </section>
-      {(phase === "closed" || phase === "opening") && <button className="rpg-book-cover" onClick={() => setPhase("opening")} disabled={phase === "opening"} aria-label="Abrir o diário de RPG">
-        <span className="cover-frame" aria-hidden="true" />
-        <span className="cover-small">Memórias de uma mesa</span>
-        <span className="cover-title">Crônicas</span>
-        <span className="cover-subtitle">Diário de RPG</span>
-        <BookSigil className="cover-sigil" />
-        <span className="cover-rule" aria-hidden="true">✦</span>
-        <span className="cover-dedication">Para aqueles que vivem<br />histórias extraordinárias.</span>
-        <span className="cover-open-hint">Clique para abrir <span aria-hidden="true">↗</span></span>
+      {(phase === "closed" || phase === "opening") && <button className={styles['rpg-book-cover']} onClick={() => setPhase("opening")} disabled={phase === "opening"} aria-label="Abrir o diário de RPG">
+        <span className={styles['cover-frame']} aria-hidden="true" />
+        <span className={styles.spine} aria-hidden="true" />
+        <span className={[styles.metalCorner, styles.topLeft].join(" ")} aria-hidden="true" />
+        <span className={[styles.metalCorner, styles.topRight].join(" ")} aria-hidden="true" />
+        <span className={[styles.metalCorner, styles.bottomLeft].join(" ")} aria-hidden="true" />
+        <span className={[styles.metalCorner, styles.bottomRight].join(" ")} aria-hidden="true" />
+        <span className={[styles.clasp, styles.claspUpper].join(" ")} aria-hidden="true" />
+        <span className={[styles.clasp, styles.claspLower].join(" ")} aria-hidden="true" />
+        <span className={styles['cover-small']}>Memórias de uma mesa</span>
+        <span className={styles['cover-title']}>Crônicas</span>
+        <span className={styles['cover-subtitle']}>Diário de RPG</span>
+        <BookSigil className={styles['cover-sigil']} />
+        <span className={styles['cover-rule']} aria-hidden="true">✦</span>
+        <span className={styles['cover-dedication']}>Para aqueles que vivem<br />histórias extraordinárias.</span>
+        <span className={styles['cover-open-hint']}>Clique para abrir <span aria-hidden="true">↗</span></span>
       </button>}
-      {phase === "turning" && <div className="book-turning-leaf" aria-hidden="true"><span>Um novo capítulo</span><BookSigil /></div>}
+      {phase === "turning" && <div className={styles['book-turning-leaf']} aria-hidden="true"><span>Um novo capítulo</span><BookSigil /></div>}
     </div>
-    <p className="book-scene-footer">{phase === "closed" ? "Seu próximo capítulo começa aqui." : "Crônicas · O diário compartilhado da sua mesa"}</p>
+    <p className={styles['book-scene-footer']}>{phase === "closed" ? "Seu próximo capítulo começa aqui." : "Crônicas · O diário compartilhado da sua mesa"}</p>
   </main>;
 }

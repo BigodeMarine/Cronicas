@@ -1,4 +1,7 @@
 "use client";
+import styles from "@/styles/Ui.module.css";
+import { classNames } from "@/styles/classNames";
+
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,13 +16,13 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-brand">
-        <span className="brand-icon">📖</span>
+    <aside className={styles['sidebar']}>
+      <div className={styles['sidebar-brand']}>
+        <span className={styles['brand-icon']}>📖</span>
         <span>Crônicas</span>
       </div>
 
-      <nav className="sidebar-nav">
+      <nav className={styles['sidebar-nav']}>
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
 
@@ -27,7 +30,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`sidebar-link ${isActive ? "active" : ""}`}
+              className={classNames(styles, `sidebar-link ${isActive ? "active" : ""}`)}
             >
               {item.label}
             </Link>
@@ -35,8 +38,8 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="sidebar-footer">
-        <span className="status-dot" />
+      <div className={styles['sidebar-footer']}>
+        <span className={styles['status-dot']} />
         <span>Crônicas Online</span>
       </div>
     </aside>

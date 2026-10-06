@@ -1,4 +1,7 @@
 "use client";
+import styles from "./DiaryBookShell.module.css";
+import ui from "@/styles/Ui.module.css";
+
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -34,26 +37,26 @@ export default function DiaryBookShell({ children }: { children: React.ReactNode
     router.push("/");
   }
 
-  return <main className="diary-desk">
-    <div className="diary-desk-caption"><Link href="/">Crônicas</Link><span>O registro de suas aventuras</span></div>
-    <div className="diary-bound-book">
-      <aside className="diary-index-page">
-        <span className="book-page-kicker">Crônicas da mesa</span>
-        <BookSigil className="diary-index-sigil" />
+  return <main className={styles['diary-desk']}>
+    <div className={styles['diary-desk-caption']}><Link href="/">Crônicas</Link><span>O registro de suas aventuras</span></div>
+    <div className={styles['diary-bound-book']}>
+      <aside className={styles['diary-index-page']}>
+        <span className={styles['book-page-kicker']}>Crônicas da mesa</span>
+        <BookSigil className={styles['diary-index-sigil']} />
         <h1>DIÁRIO</h1>
-        <p className="diary-index-intro">Um lugar para guardar<br />o que a aventura deixou.</p>
-        <div className="book-ornament" aria-hidden="true">✦</div>
-        <nav className="diary-index-nav" aria-label="Capítulos do diário">
+        <p className={styles['diary-index-intro']}>Um lugar para guardar<br />o que a aventura deixou.</p>
+        <div className={styles['book-ornament']} aria-hidden="true">✦</div>
+        <nav className={styles['diary-index-nav']} aria-label="Capítulos do diário">
           <Link href="/journal" aria-current={pathname === "/journal" ? "page" : undefined}><span>01</span> Diário da mesa</Link>
           <Link href="/projects" aria-current={pathname === "/projects" ? "page" : undefined}><span>02</span> Campanhas</Link>
         </nav>
-        <div className="diary-index-bottom"><p>{user ? `Um capítulo de ${user.name}` : "Abrindo as páginas…"}</p><button type="button" onClick={closeBook}>Fechar o livro e sair <span aria-hidden="true">↙</span></button></div>
-        <span className="book-folio">Crônicas</span>
+        <div className={styles['diary-index-bottom']}><p>{user ? `Um capítulo de ${user.name}` : "Abrindo as páginas…"}</p><button type="button" onClick={closeBook}>Fechar o livro e sair <span aria-hidden="true">↙</span></button></div>
+        <span className={styles['book-folio']}>Crônicas</span>
       </aside>
-      <section className="diary-content-page" key={pathname} aria-label="Páginas do diário">
-        <div className="diary-running-title"><span>{pathname === "/projects" ? "Os mundos que habitamos" : "As histórias que escrevemos"}</span><span aria-hidden="true">✦</span></div>
-        {error ? <p role="alert" className="login-error">{error}</p> : user ? children : <p role="status">Abrindo seu diário…</p>}
-        <footer className="diary-page-footer">Que estas páginas nunca fiquem em branco.</footer>
+      <section className={styles['diary-content-page']} key={pathname} aria-label="Páginas do diário">
+        <div className={styles['diary-running-title']}><span>{pathname === "/projects" ? "Os mundos que habitamos" : "As histórias que escrevemos"}</span><span aria-hidden="true">✦</span></div>
+        {error ? <p role="alert" className={ui['login-error']}>{error}</p> : user ? children : <p role="status">Abrindo seu diário…</p>}
+        <footer className={styles['diary-page-footer']}>Que estas páginas nunca fiquem em branco.</footer>
       </section>
     </div>
   </main>;

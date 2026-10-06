@@ -1,3 +1,4 @@
+import styles from "@/styles/Ui.module.css";
 interface Activity {
   id: number;
   description: string;
@@ -10,18 +11,18 @@ interface ActivityListProps {
 
 export default function ActivityList({ activities }: ActivityListProps) {
   return (
-    <section className="dashboard-panel">
-      <div className="panel-header">
+    <section className={styles['dashboard-panel']}>
+      <div className={styles['panel-header']}>
         <div>
           <h2>Atividade recente</h2>
           <p>Últimas ações realizadas no workspace.</p>
         </div>
       </div>
 
-      <div className="activity-list">
+      <div className={styles['activity-list']}>
         {activities.map((activity) => (
-          <div className="activity-item" key={activity.id}>
-            <span className="activity-dot" />
+          <div className={styles['activity-item']} key={activity.id}>
+            <span className={styles['activity-dot']} />
 
             <div>
               <strong>{activity.description}</strong>
