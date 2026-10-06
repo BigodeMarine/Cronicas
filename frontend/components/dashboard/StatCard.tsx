@@ -13,15 +13,15 @@ export default function StatCard({
   icon,
 }: StatCardProps) {
   return (
-    <article className={styles['stat-card']}>
-      <div className={styles['stat-card-header']}>
-        <span className={styles['stat-card-title']}>{title}</span>
-        <span className={styles['stat-card-icon']}>{icon}</span>
+    <article className={styles["stat-card"]}>
+      <div className={styles["stat-card-header"]}>
+        <span className={styles["stat-card-title"]}>{title}</span>
+        <span className={styles["stat-card-icon"]}>{icon}</span>
       </div>
 
-      <strong className={styles['stat-card-value']}>{value}</strong>
+      <strong className={styles["stat-card-value"]}>{value}</strong>
 
-      <span className={styles['stat-card-description']}>{description}</span>
+      <span className={styles["stat-card-description"]}>{description}</span>
     </article>
   );
 }

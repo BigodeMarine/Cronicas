@@ -50,7 +50,7 @@ export default function TasksContent() {
   const [createError, setCreateError] = useState<string | null>(null);
 
   /**
-    * Busca as campanhas do usuário e carrega os acontecimentos de cada campanha.
+   * Busca as campanhas do usuário e carrega os acontecimentos de cada campanha.
    */
   async function loadTasks() {
     try {
@@ -123,7 +123,7 @@ export default function TasksContent() {
 
   /**
    * Abre o formulário para criação de um novo acontecimento.
-  */
+   */
   function handleNewTask() {
     const firstProject = projectTasks[0]?.project;
 
@@ -140,8 +140,8 @@ export default function TasksContent() {
   }
 
   /**
- * Abre o formulário preenchido com os dados do acontecimento selecionado.
- */
+   * Abre o formulário preenchido com os dados do acontecimento selecionado.
+   */
   function handleEditTask(task: Task) {
     setEditingTask(task);
     setSelectedProjectId(task.project_id);
@@ -174,9 +174,7 @@ export default function TasksContent() {
   /**
    * Cria um novo acontecimento na campanha selecionada e atualiza a lista exibida sem recarregar a página.
    */
-  async function handleCreateTask(
-    event: React.SubmitEvent<HTMLFormElement>,
-  ) {
+  async function handleCreateTask(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!selectedProjectId) {
@@ -201,9 +199,9 @@ export default function TasksContent() {
         currentProjects.map((projectItem) =>
           projectItem.project.id === selectedProjectId
             ? {
-              ...projectItem,
-              tasks: [...projectItem.tasks, task],
-            }
+                ...projectItem,
+                tasks: [...projectItem.tasks, task],
+              }
             : projectItem,
         ),
       );
@@ -223,9 +221,7 @@ export default function TasksContent() {
   /**
    * Atualiza o acontecimento selecionado e sincroniza a lista exibida.
    */
-  async function handleUpdateTask(
-    event: React.SubmitEvent<HTMLFormElement>,
-  ) {
+  async function handleUpdateTask(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!editingTask || !selectedProjectId) {
@@ -243,16 +239,14 @@ export default function TasksContent() {
         description || null,
         status,
         priority,
-        assigneeId
+        assigneeId,
       );
 
       setProjectTasks((currentProjects) =>
         currentProjects.map((projectItem) => ({
           ...projectItem,
           tasks: projectItem.tasks.map((task) =>
-            task.id === updatedTask.id
-              ? updatedTask
-              : task,
+            task.id === updatedTask.id ? updatedTask : task,
           ),
         })),
       );
@@ -270,7 +264,7 @@ export default function TasksContent() {
   }
 
   /**
-  * Exclui um acontecimento após confirmação do usuário.
+   * Exclui um acontecimento após confirmação do usuário.
    */
   async function handleDeleteTask(task: Task) {
     const confirmed = window.confirm(
@@ -307,8 +301,8 @@ export default function TasksContent() {
 
   if (loading) {
     return (
-      <div className={styles['projects-feedback']}>
-        <div className={styles['loading-spinner']} />
+      <div className={styles["projects-feedback"]}>
+        <div className={styles["loading-spinner"]} />
         <p>Carregando acontecimentos...</p>
       </div>
     );
@@ -316,7 +310,11 @@ export default function TasksContent() {
 
   if (error) {
     return (
-      <div className={[styles['projects-feedback'], styles['projects-error']].join(" ")}>
+      <div
+        className={[styles["projects-feedback"], styles["projects-error"]].join(
+          " ",
+        )}
+      >
         <h3>Não foi possível carregar os acontecimentos</h3>
         <p>{error}</p>
       </div>
@@ -344,17 +342,15 @@ export default function TasksContent() {
   }
 
   return (
-    <div className={styles['tasks-content']}>
-      <div className={styles['tasks-toolbar']}>
-        <div className={styles['tasks-summary']}>
+    <div className={styles["tasks-content"]}>
+      <div className={styles["tasks-toolbar"]}>
+        <div className={styles["tasks-summary"]}>
           <strong>{totalTasks}</strong>
-          <span>
-            {totalTasks === 1 ? "acontecimento" : "acontecimentos"}
-          </span>
+          <span>{totalTasks === 1 ? "acontecimento" : "acontecimentos"}</span>
         </div>
 
         <button
-          className={styles['primary-button']}
+          className={styles["primary-button"]}
           onClick={handleNewTask}
           disabled={projectTasks.length === 0}
         >
@@ -363,8 +359,8 @@ export default function TasksContent() {
       </div>
 
       {showForm && (
-        <section className={styles['task-form-card']}>
-          <div className={styles['project-form-header']}>
+        <section className={styles["task-form-card"]}>
+          <div className={styles["project-form-header"]}>
             <div>
               <h3>
                 {editingTask ? "Editar acontecimento" : "Novo acontecimento"}
@@ -379,23 +375,17 @@ export default function TasksContent() {
           </div>
 
           <form
-            className={styles['project-form']}
-            onSubmit={
-              editingTask
-                ? handleUpdateTask
-                : handleCreateTask
-            }
+            className={styles["project-form"]}
+            onSubmit={editingTask ? handleUpdateTask : handleCreateTask}
           >
-            <div className={styles['form-field']}>
+            <div className={styles["form-field"]}>
               <label htmlFor="task-project">Campanha</label>
 
               <select
                 id="task-project"
                 value={selectedProjectId ?? ""}
                 onChange={(event) =>
-                  setSelectedProjectId(
-                    Number(event.target.value),
-                  )
+                  setSelectedProjectId(Number(event.target.value))
                 }
                 required
                 disabled={creating || updating}
@@ -412,7 +402,7 @@ export default function TasksContent() {
               </select>
             </div>
 
-            <div className={styles['form-field']}>
+            <div className={styles["form-field"]}>
               <label htmlFor="task-title">Título</label>
 
               <input
@@ -426,25 +416,21 @@ export default function TasksContent() {
               />
             </div>
 
-            <div className={styles['form-field']}>
-              <label htmlFor="task-description">
-                Descrição
-              </label>
+            <div className={styles["form-field"]}>
+              <label htmlFor="task-description">Descrição</label>
 
               <textarea
                 id="task-description"
                 value={description}
-                onChange={(event) =>
-                  setDescription(event.target.value)
-                }
+                onChange={(event) => setDescription(event.target.value)}
                 placeholder="Descreva o que aconteceu durante a aventura"
                 rows={4}
                 disabled={creating || updating}
               />
             </div>
 
-            <div className={styles['task-form-row']}>
-              <div className={styles['form-field']}>
+            <div className={styles["task-form-row"]}>
+              <div className={styles["form-field"]}>
                 <label htmlFor="task-status">Status</label>
 
                 <select
@@ -456,25 +442,19 @@ export default function TasksContent() {
                   disabled={creating || updating}
                 >
                   <option value="TODO">A fazer</option>
-                  <option value="IN_PROGRESS">
-                    Em andamento
-                  </option>
+                  <option value="IN_PROGRESS">Em andamento</option>
                   <option value="DONE">Concluída</option>
                 </select>
               </div>
 
-              <div className={styles['form-field']}>
-                <label htmlFor="task-priority">
-                  Prioridade
-                </label>
+              <div className={styles["form-field"]}>
+                <label htmlFor="task-priority">Prioridade</label>
 
                 <select
                   id="task-priority"
                   value={priority}
                   onChange={(event) =>
-                    setPriority(
-                      event.target.value as TaskPriority,
-                    )
+                    setPriority(event.target.value as TaskPriority)
                   }
                   disabled={creating || updating}
                 >
@@ -486,7 +466,7 @@ export default function TasksContent() {
               </div>
             </div>
 
-            <div className={styles['form-field']}>
+            <div className={styles["form-field"]}>
               <label htmlFor="task-assignee">Responsável</label>
 
               <select
@@ -510,14 +490,14 @@ export default function TasksContent() {
             </div>
 
             {(createError || editError) && (
-              <div className={styles['login-error']}>
+              <div className={styles["login-error"]}>
                 {createError || editError}
               </div>
             )}
-            <div className={styles['project-form-actions']}>
+            <div className={styles["project-form-actions"]}>
               <button
                 type="button"
-                className={styles['secondary-button']}
+                className={styles["secondary-button"]}
                 onClick={closeForm}
                 disabled={creating || updating}
               >
@@ -526,7 +506,7 @@ export default function TasksContent() {
 
               <button
                 type="submit"
-                className={styles['primary-button']}
+                className={styles["primary-button"]}
                 disabled={creating || updating}
               >
                 {creating
@@ -543,18 +523,18 @@ export default function TasksContent() {
       )}
 
       {totalTasks === 0 ? (
-        <section className={styles['empty-state']}>
-          <div className={styles['empty-state-icon']}>✓</div>
+        <section className={styles["empty-state"]}>
+          <div className={styles["empty-state-icon"]}>✓</div>
 
           <h3>Nenhum acontecimento encontrado</h3>
 
           <p>
-            Registre o primeiro acontecimento de uma das suas
-            campanhas para começar sua crônica.
+            Registre o primeiro acontecimento de uma das suas campanhas para
+            começar sua crônica.
           </p>
 
           <button
-            className={styles['primary-button']}
+            className={styles["primary-button"]}
             onClick={handleNewTask}
             disabled={projectTasks.length === 0}
           >
@@ -570,38 +550,39 @@ export default function TasksContent() {
           return (
             <section
               key={project.id}
-              className={styles['tasks-project-section']}
+              className={styles["tasks-project-section"]}
             >
-              <div className={styles['tasks-project-header']}>
+              <div className={styles["tasks-project-header"]}>
                 <div>
                   <h3>{project.name}</h3>
                   <p>{project.description}</p>
                 </div>
 
-                <span className={styles['tasks-project-count']}>
+                <span className={styles["tasks-project-count"]}>
                   {tasks.length}
                 </span>
               </div>
 
-              <div className={styles['tasks-list']}>
+              <div className={styles["tasks-list"]}>
                 {tasks.map((task) => {
-                  const assigneeName = getMemberName(project.id, task.assignee_id);
+                  const assigneeName = getMemberName(
+                    project.id,
+                    task.assignee_id,
+                  );
 
                   return (
-                    <article
-                      key={task.id}
-                      className={styles['task-card']}
-                    >
-                      <div className={styles['task-card-content']}>
+                    <article key={task.id} className={styles["task-card"]}>
+                      <div className={styles["task-card-content"]}>
                         <h4>{task.title}</h4>
 
-                        {task.description && (
-                          <p>{task.description}</p>
-                        )}
+                        {task.description && <p>{task.description}</p>}
 
-                        <div className={styles['task-card-meta']}>
+                        <div className={styles["task-card-meta"]}>
                           <span
-                            className={classNames(styles, `task-status ${task.status}`)}
+                            className={classNames(
+                              styles,
+                              `task-status ${task.status}`,
+                            )}
                           >
                             {task.status === "TODO"
                               ? "A fazer"
@@ -611,22 +592,25 @@ export default function TasksContent() {
                           </span>
 
                           <span
-                            className={classNames(styles, `task-priority ${task.priority}`)}
+                            className={classNames(
+                              styles,
+                              `task-priority ${task.priority}`,
+                            )}
                           >
                             {task.priority}
                           </span>
 
                           {assigneeName && (
-                            <span className={styles['task-assignee']}>
+                            <span className={styles["task-assignee"]}>
                               Responsável: {assigneeName}
                             </span>
                           )}
                         </div>
 
-                        <div className={styles['task-card-actions']}>
+                        <div className={styles["task-card-actions"]}>
                           <button
                             type="button"
-                            className={styles['project-action-button']}
+                            className={styles["project-action-button"]}
                             onClick={() => handleEditTask(task)}
                             disabled={deleting}
                           >
@@ -635,7 +619,10 @@ export default function TasksContent() {
 
                           <button
                             type="button"
-                            className={[styles['project-action-button'], styles['project-delete-button']].join(" ")}
+                            className={[
+                              styles["project-action-button"],
+                              styles["project-delete-button"],
+                            ].join(" ")}
                             onClick={() => handleDeleteTask(task)}
                             disabled={deleting}
                           >
@@ -654,4 +641,3 @@ export default function TasksContent() {
     </div>
   );
 }
-
