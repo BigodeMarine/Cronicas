@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from app.core.dependencies import get_current_user
 from app.database.session import get_db
-from app.models import Project, ProjectMember, User, CampaignSession, JournalEntry
+from app.models import Project, ProjectMember, User, CampaignSession, JournalEntry, EntryComment
 from app.schemas.journal import CampaignInput, CampaignResponse, SessionInput, SessionResponse, EntryInput, EntryResponse, ParticipantInput
 from app.services.project_member_service import get_project_members
+from app.schemas.journal import EntryCommentInput, EntryCommentResponse
 
 router = APIRouter(prefix="/campaigns", tags=["Diário de RPG"])
 
@@ -122,7 +123,7 @@ def update_session(campaign_id: int, session_id: int, data: SessionInput, db: Se
 @router.get("/{campaign_id}/entries", response_model=list[EntryResponse])
 def entries(campaign_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     accessible(db, campaign_id, user)
-    return db.query(JournalEntry).filter_by(project_id=campaign_id).order_by(JournalEntry.created_at.desc(), JournalEntry.id.desc()).all()
+    return db.query(JournalEntry).options(selectinload(JournalEntry.author), selectinload(JournalEntry.comments).selectinload(EntryComment.author)).filter_by(project_id=campaign_id).order_by(JournalEntry.created_at.desc(), JournalEntry.id.desc()).all()
 
 
 @router.post("/{campaign_id}/entries", response_model=EntryResponse, status_code=201)
@@ -156,4 +157,46 @@ def update_entry(campaign_id: int, entry_id: int, data: EntryInput, db: Session 
 @router.delete("/{campaign_id}/entries/{entry_id}", status_code=204)
 def delete_entry(campaign_id: int, entry_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     db.delete(editable_entry(db, campaign_id, entry_id, user))
+    db.commit()
+
+
+def readable_entry(db: Session, campaign_id: int, entry_id: int, user: User):
+    accessible(db, campaign_id, user)
+    entry = db.query(JournalEntry).filter_by(id=entry_id, project_id=campaign_id).first()
+    if not entry:
+        raise HTTPException(404, "Relato não encontrado nesta campanha.")
+    return entry
+
+
+@router.get("/{campaign_id}/entries/{entry_id}/comments", response_model=list[EntryCommentResponse])
+def list_entry_comments(campaign_id: int, entry_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    return readable_entry(db, campaign_id, entry_id, user).comments
+
+
+@router.post("/{campaign_id}/entries/{entry_id}/comments", response_model=EntryCommentResponse, status_code=201)
+def create_entry_comment(campaign_id: int, entry_id: int, data: EntryCommentInput, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    readable_entry(db, campaign_id, entry_id, user)
+    return save(db, EntryComment(entry_id=entry_id, author_id=user.id, content=data.content))
+
+
+def editable_comment(db, campaign_id, entry_id, comment_id, user):
+    entry = readable_entry(db, campaign_id, entry_id, user)
+    comment = db.query(EntryComment).filter_by(id=comment_id, entry_id=entry.id).first()
+    if not comment:
+        raise HTTPException(404, "Comentário não encontrado.")
+    if comment.author_id != user.id and entry.project.owner_id != user.id:
+        raise HTTPException(403, "Você só pode alterar seus próprios comentários.")
+    return comment
+
+
+@router.put("/{campaign_id}/entries/{entry_id}/comments/{comment_id}", response_model=EntryCommentResponse)
+def update_entry_comment(campaign_id: int, entry_id: int, comment_id: int, data: EntryCommentInput, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    comment = editable_comment(db, campaign_id, entry_id, comment_id, user)
+    comment.content = data.content
+    return save(db, comment)
+
+
+@router.delete("/{campaign_id}/entries/{entry_id}/comments/{comment_id}", status_code=204)
+def delete_entry_comment(campaign_id: int, entry_id: int, comment_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    db.delete(editable_comment(db, campaign_id, entry_id, comment_id, user))
     db.commit()

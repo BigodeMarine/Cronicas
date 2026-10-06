@@ -28,6 +28,24 @@ class JournalEntry(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda context: context.get_current_parameters()["created_at"], onupdate=lambda: datetime.now(timezone.utc))
     project = relationship("Project", back_populates="entries")
     author = relationship("User")
+    comments = relationship("EntryComment", back_populates="entry", cascade="all, delete-orphan", order_by="(EntryComment.created_at, EntryComment.id)")
+
+    @property
+    def author_name(self) -> str:
+        return self.author.name
+
+
+class EntryComment(Base):
+    __tablename__ = "entry_comments"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    entry_id: Mapped[int] = mapped_column(ForeignKey("journal_entries.id", ondelete="CASCADE"), index=True)
+    author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    content: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda context: context.get_current_parameters()["created_at"], onupdate=lambda: datetime.now(timezone.utc))
+    entry = relationship("JournalEntry", back_populates="comments")
+    author = relationship("User")
 
     @property
     def author_name(self) -> str:

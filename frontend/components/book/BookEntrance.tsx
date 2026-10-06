@@ -85,8 +85,7 @@ export default function BookEntrance({ initialMode, initiallyOpen = false }: { i
 
   return <main data-phase={phase} className={classNames(styles, `book-scene phase-${phase}`)}>
     <div className={styles['book-ambient']} aria-hidden="true" />
-    <p className={styles['book-scene-caption']}>Uma mesa. Muitas vozes. Uma história.</p>
-    <p className={styles['book-live-status']} role="status">{phase === "opening" ? "O diário está abrindo." : phase === "turning" ? notice : ""}</p>
+        <p className={styles['book-live-status']} role="status">{phase === "opening" ? "O diário está abrindo." : phase === "turning" ? notice : ""}</p>
     <div className={classNames(styles, `entrance-book ${opened ? "is-open" : ""}`)}>
       <section className={styles['auth-spread']} aria-label="Primeiras páginas do diário" inert={phase !== "open"}>
         <div className={[styles['auth-page'], styles['auth-dedication']].join(" ")}>
@@ -112,7 +111,7 @@ export default function BookEntrance({ initialMode, initiallyOpen = false }: { i
             <input id="book-password" name="password" type="password" placeholder={mode === "register" ? "Pelo menos 8 caracteres" : "Sua senha"} autoComplete={mode === "register" ? "new-password" : "current-password"} minLength={mode === "register" ? 8 : undefined} maxLength={128} required disabled={busy} />
             {error && <p className={styles['book-auth-error']} role="alert">{error}</p>}
             {notice && <p className={styles['book-auth-notice']} role="status">{notice}</p>}
-            <button className={styles['book-submit']} disabled={busy}>{busy ? "Abrindo o diário…" : mode === "login" ? "Entrar no diário" : "Criar conta e abrir o diário"}<span aria-hidden="true">→</span></button>
+            <button className={styles['book-submit']} disabled={busy}>{busy ? "Abrindo o diário…" : mode === "login" ? "Entrar no diário" : "Criar conta e abrir o diário"}</button>
           </form>
           <p className={styles['book-auth-footnote']}>{mode === "login" ? "Ainda não faz parte desta história?" : "Já tem histórias por aqui?"} <button type="button" onClick={() => changeMode(mode === "login" ? "register" : "login")} disabled={busy}>{mode === "login" ? "Criar conta" : "Entrar"}</button></p>
           <span className={styles['book-folio']}>II</span>
@@ -133,7 +132,7 @@ export default function BookEntrance({ initialMode, initiallyOpen = false }: { i
         <BookSigil className={styles['cover-sigil']} />
         <span className={styles['cover-rule']} aria-hidden="true">✦</span>
         <span className={styles['cover-dedication']}>Para aqueles que vivem<br />histórias extraordinárias.</span>
-        <span className={styles['cover-open-hint']}>Clique para abrir <span aria-hidden="true">↗</span></span>
+        <span className={styles['cover-open-hint']}>Clique para abrir </span>
       </button>}
       {phase === "turning" && <div className={styles['book-turning-leaf']} aria-hidden="true"><span>Um novo capítulo</span><BookSigil /></div>}
     </div>

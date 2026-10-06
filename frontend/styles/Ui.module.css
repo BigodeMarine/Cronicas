@@ -275,8 +275,8 @@
 .page-header h2 { font-size: 30px; color: #48321f; }
 .page-header p, .dashboard p { color: #887052; font-size: var(--font-size-sm); }
 .journal-eyebrow { color: #997444; font-size: var(--font-size-sm); }
-.primary-button { background: #65472d; border-color: #65472d; color: #f7ead0; font-size: var(--font-size-sm); }
-.secondary-button { border-color: #b79a73; color: #755334; font-size: var(--font-size-sm); }
+.primary-button { background: var(--color-action); border-color: var(--color-action); color: #f7ead0; font-size: var(--font-size-sm); }
+.secondary-button { border-color: #b79a73; color: var(--color-action); font-size: var(--font-size-sm); }
 .journal-tabs { border-bottom: 1px solid #b79a7355; padding-bottom: 18px; gap: 10px; }
 .journal-entry, .project-card, .project-form-card, .members-panel { background: #fff8e735; border-color: #bea57b77; border-radius: 5px; }
 .journal-entry h3 { font-size: 25px; }
@@ -300,3 +300,8 @@
 @media (min-width: 1200px) {
   .journal-page { max-width: none; }
 }
+.page-header h2, .journal-entry h3, .project-card h3 { max-width: 100%; overflow-wrap: anywhere; }
+.primary-button:hover { background: var(--color-action-hover); }
+.member-avatar { color: var(--color-text-light); background: var(--color-action); }
+.member-role { color: var(--color-action); background: var(--color-comment-surface); }
+.form-field select { appearance: none; }

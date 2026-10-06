@@ -1,6 +1,6 @@
 /* Crônicas: leather binding, parchment leaves and a quiet tabletop. */
 .book-scene {
-  background: radial-gradient(ellipse at 50% 24%, #443328 0%, #211c19 46%, #100f0e 100%);
+  background: radial-gradient(ellipse at 50% 24%, #344536 0%, #1c2c24 46%, #111c17 100%);
   min-height: 100svh;
   position: relative;
   isolation: isolate;
@@ -35,7 +35,7 @@
 .cover-dedication { margin-top: 22px; font: italic var(--font-size-sm)/1.7 Georgia, serif; color: #b99664; }
 .cover-open-hint { margin-top: auto; font-size: var(--font-size-sm); letter-spacing: .13em; text-transform: uppercase; padding-top: 14px; }
 .cover-open-hint span { margin-left: 10px; }
-.auth-spread { display: grid; grid-template-columns: 1fr 1fr; height: 100%; border: 7px solid #462920; border-radius: 9px; overflow: hidden; color: var(--ink); background: var(--paper); box-shadow: 0 6px 0 #9b805f, 0 11px 0 #36221b, 0 35px 65px #00000060; }
+.auth-spread { display: grid; grid-template-columns: 1fr 1fr; height: 100%; border: 7px solid var(--color-action); border-radius: 9px; overflow: hidden; color: var(--ink); background: var(--paper); box-shadow: 0 6px 0 #9b805f, 0 11px 0 #131c17, 0 35px 65px #00000060; }
 .phase-closed .auth-spread { visibility: hidden; }
 .auth-page { position: relative; padding: 46px 48px 48px; background: radial-gradient(ellipse at 30% 30%, #ffffff40, transparent 70%), repeating-linear-gradient(0deg, #917d4b03 0 1px, transparent 1px 4px), #f2e5c8; }
 .auth-dedication { text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: inset -22px 0 30px -24px #3e291aa6; border-right: 1px solid #ab947f55; }
@@ -48,15 +48,15 @@
 .book-folio { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; color: #aa9272; font: italic var(--font-size-sm) Georgia, serif; }
 .book-auth-tabs { display: flex; gap: 26px; margin-bottom: 40px; border-bottom: 1px solid #bba37d55; }
 .book-auth-tabs button { background: none; border: 0; color: #9a8668; padding: 0 0 12px; font-size: var(--font-size-sm); cursor: pointer; }
-.book-auth-tabs button[aria-pressed=true] { border-bottom: 2px solid #8b6236; color: #513c27; }
+.book-auth-tabs button[aria-pressed=true] { border-bottom: 2px solid var(--color-action); color: var(--color-action); }
 .auth-form-page h2 { font: 29px/1.25 Georgia, serif; margin: 10px 0 8px; }
 .book-auth-description { color: #80705a; font-size: var(--font-size-sm); line-height: 1.6; margin: 0 0 28px; }
 .book-auth-form { display: flex; flex-direction: column; }
 .book-auth-form label { font-size: var(--font-size-sm); color: #68523a; margin: 0 0 8px; }
 .book-auth-form input { background: #ffffff28; border: 1px solid #b69c766e; border-radius: 4px; width: 100%; padding: 13px 14px; font-size: var(--font-size-sm); color: #3d3023; margin-bottom: 20px; }
 .book-auth-form input::placeholder { color: #ad997d; }
-.book-submit { display: flex; align-items: center; justify-content: space-between; border: 1px solid #503a26; border-radius: 4px; padding: 15px 18px; background: #5a402b; color: #f5e8ce; font-size: var(--font-size-sm); cursor: pointer; margin-top: 5px; }
-.book-submit:hover { background: #735034; }
+.book-submit { display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--color-action); border-radius: 4px; padding: 15px 18px; background: var(--color-action); color: #f5e8ce; font-size: var(--font-size-sm); cursor: pointer; margin-top: 5px; }
+.book-submit:hover { background: var(--color-action-hover); }
 .book-submit span { font-size: 18px; }
 .book-auth-footnote { font-size: var(--font-size-sm); color: #968063; margin-top: 22px; line-height: 1.8; }
 .book-auth-footnote button { border: 0; background: none; text-decoration: underline; color: #6d4c2f; font-size: inherit; cursor: pointer; padding: 0 3px; }
@@ -171,4 +171,16 @@
   .cover-sigil { width: clamp(188px, 12vw, 260px); height: clamp(188px, 12vw, 260px); }
   .metalCorner { width: clamp(80px, 5vw, 110px); height: clamp(80px, 5vw, 110px); }
   .phase-opening .rpg-book-cover { width: 50%; }
+}
+
+/* Keep the title inside the actual cover, including 375px phones. */
+.cover-title { max-width: 100%; overflow-wrap: anywhere; }
+.auth-page { min-width: 0; }
+.auth-form-page h2, .auth-dedication h1 { overflow-wrap: anywhere; }
+.book-submit { justify-content: center; }
+@media (max-width: 600px) {
+  .cover-title { font-size: clamp(2rem, 10vw, 3rem); letter-spacing: .015em; }
+  .cover-small, .cover-subtitle, .cover-dedication { max-width: 100%; overflow-wrap: anywhere; }
+  .cover-small { letter-spacing: .07em; }
+  .auth-form-page h2 { font-size: clamp(1.75rem, 8vw, 2.25rem); }
 }

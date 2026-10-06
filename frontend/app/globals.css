@@ -4,8 +4,8 @@
      ========================= */
 
   /* Fundos */
-  --color-background: #17130f;
-  --color-surface: #241d16;
+  --color-background: #111c17;
+  --color-surface: #1c2c24;
 
   /* Pergaminho */
   --color-parchment: #e8d7b5;
@@ -17,13 +17,13 @@
   --color-text-muted: #8b8174;
 
   /* Identidade */
-  --color-primary: #c69a45;
-  --color-primary-hover: #b28738;
+  --color-primary: #d7b16b;
+  --color-primary-hover: #e2c58d;
   --color-secondary: #8c6a3b;
 
   /* Bordas */
-  --color-border: #8c6a3b;
-  --color-border-subtle: #5c4830;
+  --color-border: #a48247;
+  --color-border-subtle: #344536;
 
   /* Estados */
   --color-success: #526b3a;
@@ -88,5 +88,9 @@
   --ink: #3d3023;
   --muted-ink: #756044;
   --gold: #cfa969;
+  --color-action: #1c2c24;
+  --color-action-hover: #344536;
+  --color-metal: #d7b16b;
+  --color-comment-surface: #e9dfc7;
   --paper: #f2e5c8;
 }

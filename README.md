@@ -7,6 +7,7 @@ Diário de RPG compartilhado por toda a mesa. O login, as contas e as campanhas 
 - Criar campanhas com nome, cenário e sistema de RPG.
 - O criador é o mestre: edita a campanha, registra/edita sessões e adiciona ou remove jogadores pelo e-mail de uma conta existente.
 - Mestre e jogadores leem e publicam relatos, livres ou vinculados a uma sessão.
+- Todos os participantes podem comentar nos relatos uns dos outros. Comentários têm autoria e data, podem ser editados/excluídos pelo autor e moderados pelo mestre. O acesso aos comentários é revogado junto com a participação na campanha.
 - Autores editam/excluem seus próprios relatos; o mestre também pode moderá-los. Um jogador não altera relatos de outro jogador.
 - Remover um jogador revoga seu acesso, preservando seus relatos. As campanhas são privadas para seus participantes.
 
@@ -41,3 +42,5 @@ Em `frontend`: `npm run build` valida a compilação e TypeScript; `npm run lint
 `frontend/app/globals.css` contém somente tokens de cores, tipografia, espaçamento e sombras. O reset está em `styles/Base.module.css`; controles compartilhados em `styles/Ui.module.css`; capa/autenticação e encadernação do diário têm seus próprios CSS Modules em `components/book`. Componentes usam classes locais, sem seletores globais para as telas.
 
 A escala usa o Portfolio de BigodeMarine como referência: descrições em 1,3rem, formulários/ações em 1,125rem, textos secundários em 1rem e títulos responsivos. A capa é um grimório com couro verde escuro, cantoneiras, fechos e um D20 vetorial, sem depender de serviços externos de imagem ou fontes. A abertura e a virada de página respeitam a preferência por movimento reduzido.
+
+A migração `d42b8e930002` adiciona os comentários dos relatos. Ao atualizar uma instalação local, execute `poetry run alembic upgrade head` em `backend` antes de reiniciar a API. A paleta verde/dourada do grimório é compartilhada pelo projeto através dos tokens globais.

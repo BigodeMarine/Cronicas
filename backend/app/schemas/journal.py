@@ -1,5 +1,6 @@
 from datetime import date, datetime
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from typing import Annotated
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, StringConstraints
 
 
 class CampaignInput(BaseModel):
@@ -34,6 +35,20 @@ class EntryInput(BaseModel):
     session_id: int | None = None
 
 
+class EntryCommentInput(BaseModel):
+    content: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=5000)]
+
+
+class EntryCommentResponse(EntryCommentInput):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    entry_id: int
+    author_id: int
+    author_name: str
+    created_at: datetime
+    updated_at: datetime
+
+
 class EntryResponse(EntryInput):
     model_config = ConfigDict(from_attributes=True)
     id: int
@@ -42,6 +57,7 @@ class EntryResponse(EntryInput):
     author_name: str
     created_at: datetime
     updated_at: datetime
+    comments: list[EntryCommentResponse] = Field(default_factory=list)
 
 
 class ParticipantInput(BaseModel):

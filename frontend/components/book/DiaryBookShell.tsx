@@ -50,7 +50,7 @@ export default function DiaryBookShell({ children }: { children: React.ReactNode
           <Link href="/journal" aria-current={pathname === "/journal" ? "page" : undefined}><span>01</span> Diário da mesa</Link>
           <Link href="/projects" aria-current={pathname === "/projects" ? "page" : undefined}><span>02</span> Campanhas</Link>
         </nav>
-        <div className={styles['diary-index-bottom']}><p>{user ? `Um capítulo de ${user.name}` : "Abrindo as páginas…"}</p><button type="button" onClick={closeBook}>Fechar o livro e sair <span aria-hidden="true">↙</span></button></div>
+        <div className={styles['diary-index-bottom']}><p>{user ? `Um capítulo de ${user.name}` : "Abrindo as páginas…"}</p><button type="button" onClick={closeBook}>Fechar o livro e sair </button></div>
         <span className={styles['book-folio']}>Crônicas</span>
       </aside>
       <section className={styles['diary-content-page']} key={pathname} aria-label="Páginas do diário">
