@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
 interface ApiRequestOptions extends RequestInit {
   token?: string;
@@ -50,10 +50,12 @@ async function apiRequest<T>(
 
   if (!response.ok) {
     const errorBody = await response.text();
-
-    throw new Error(
-      errorBody || `Erro na API: ${response.status}`,
-    );
+    let message = `Erro na API: ${response.status}`;
+    try {
+      const detail = JSON.parse(errorBody).detail;
+      message = typeof detail === "string" ? detail : "Confira os campos informados.";
+    } catch { message = errorBody || message; }
+    throw new Error(message);
   }
   if (response.status === 204) {
     return undefined as T;
@@ -65,7 +67,7 @@ async function apiRequest<T>(
 export interface Project {
   id: number;
   name: string;
-  description: string;
+  description: string | null;
   owner_id: number;
   created_at: string;
   updated_at: string;
@@ -148,7 +150,6 @@ export async function login(
  * Cria um novo usuário na API.
  */
 export async function register(
-  name: string,
   email: string,
   password: string,
 ): Promise<void> {
@@ -158,7 +159,6 @@ export async function register(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name,
       email,
       password,
     }),
@@ -359,4 +359,3 @@ export async function deleteTask(
     },
   );
 }
-

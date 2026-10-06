@@ -1,3 +1,4 @@
+import styles from "@/styles/Ui.module.css";
 interface StatCardProps {
   title: string;
   value: number;
@@ -12,15 +13,15 @@ export default function StatCard({
   icon,
 }: StatCardProps) {
   return (
-    <article className="stat-card">
-      <div className="stat-card-header">
-        <span className="stat-card-title">{title}</span>
-        <span className="stat-card-icon">{icon}</span>
+    <article className={styles["stat-card"]}>
+      <div className={styles["stat-card-header"]}>
+        <span className={styles["stat-card-title"]}>{title}</span>
+        <span className={styles["stat-card-icon"]}>{icon}</span>
       </div>
 
-      <strong className="stat-card-value">{value}</strong>
+      <strong className={styles["stat-card-value"]}>{value}</strong>
 
-      <span className="stat-card-description">{description}</span>
+      <span className={styles["stat-card-description"]}>{description}</span>
     </article>
   );
 }

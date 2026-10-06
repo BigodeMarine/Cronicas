@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import base from "@/styles/Base.module.css";
 import AppLayout from "@/components/layout/AppLayout";
 
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body>
+      <body className={base.document}>
         <AppLayout>{children}</AppLayout>
       </body>
     </html>

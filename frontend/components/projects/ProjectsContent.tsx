@@ -1,362 +1,213 @@
 "use client";
+import styles from "@/styles/Ui.module.css";
+
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import ProjectCard from "@/components/projects/ProjectCard";
-import {
-  createProject,
-  deleteProject,
-  getProjects,
-  updateProject,
-  type Project,
-} from "@/services/api";
+import { request, type Campaign, type CurrentUser } from "@/services/journal";
 
 export default function ProjectsContent() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [user, setUser] = useState<CurrentUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const [error, setError] = useState("");
+  const [editing, setEditing] = useState<Campaign | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
-
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [creating, setCreating] = useState(false);
-  const [updating, setUpdating] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-
-  const [createError, setCreateError] = useState<string | null>(null);
-  const [editError, setEditError] = useState<string | null>(null);
-
-  /**
-   * Busca as campanhas do usuário autenticado.
-   */
-  async function loadProjects() {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const data = await getProjects();
-
-      setProjects(data);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Não foi possível carregar os projetos.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
-
+  const [busy, setBusy] = useState(false);
   useEffect(() => {
-    loadProjects();
+    let active = true;
+    Promise.all([
+      request<Campaign[]>("/campaigns"),
+      request<CurrentUser>("/auth/me"),
+    ])
+      .then(([data, me]) => {
+        if (active) {
+          setCampaigns(data);
+          setUser(me);
+        }
+      })
+      .catch((e) => {
+        if (active) setError(e.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
-
-  /**
-   * Limpa os campos e fecha o formulário de campanha.
-   */
-  function closeForm() {
-    setShowForm(false);
-    setEditingProject(null);
-    setName("");
-    setDescription("");
-    setCreateError(null);
-    setEditError(null);
-  }
-
-  /**
-   * Abre o formulário para criação de uma nova campanha.
-   */
-  function handleNewProject() {
-    setEditingProject(null);
-    setName("");
-    setDescription("");
-    setCreateError(null);
-    setEditError(null);
-    setShowForm(true);
-  }
-
-  /**
-  * Abre o formulário preenchido com os dados da campanha selecionada.
-   */
-  function handleEditProject(project: Project) {
-    setEditingProject(project);
-    setName(project.name);
-    setDescription(project.description);
-    setCreateError(null);
-    setEditError(null);
-    setShowForm(true);
-  }
-
-  /**
-   * Cria uma nova campanha e adiciona o resultado à lista atual.
-   */
-  async function handleCreateProject(
-    event: React.SubmitEvent<HTMLFormElement>,
-  ) {
+  async function submit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-
+    const data = new FormData(event.currentTarget);
+    setBusy(true);
+    setError("");
     try {
-      setCreating(true);
-      setCreateError(null);
-
-      const project = await createProject(name, description);
-
-      setProjects((currentProjects) => [
-        ...currentProjects,
-        project,
-      ]);
-
-      closeForm();
-    } catch (err) {
-      setCreateError(
-        err instanceof Error
-          ? err.message
-          : "Não foi possível criar o projeto.",
+      const result = await request<Campaign>(
+        editing ? `/campaigns/${editing.id}` : "/campaigns",
+        editing ? "PUT" : "POST",
+        Object.fromEntries(data),
       );
+      setCampaigns((current) =>
+        editing
+          ? current.map((c) => (c.id === result.id ? result : c))
+          : [result, ...current],
+      );
+      setShowForm(false);
+      setEditing(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Não foi possível salvar.");
     } finally {
-      setCreating(false);
+      setBusy(false);
     }
   }
-
-  /**
-  * Atualiza a campanha selecionada e sincroniza a lista exibida.
-   */
-  async function handleUpdateProject(
-    event: React.SubmitEvent<HTMLFormElement>,
-  ) {
-    event.preventDefault();
-
-    if (!editingProject) {
+  async function remove(c: Campaign) {
+    if (
+      !window.confirm(`Excluir "${c.name}" e todos os seus relatos e sessões?`)
+    )
       return;
-    }
-
+    setBusy(true);
+    setError("");
     try {
-      setUpdating(true);
-      setEditError(null);
-
-      const updatedProject = await updateProject(
-        editingProject.id,
-        name,
-        description,
-      );
-
-      setProjects((currentProjects) =>
-        currentProjects.map((project) =>
-          project.id === updatedProject.id
-            ? updatedProject
-            : project,
-        ),
-      );
-
-      closeForm();
-    } catch (err) {
-      setEditError(
-        err instanceof Error
-          ? err.message
-          : "Não foi possível atualizar o projeto.",
-      );
+      await request(`/campaigns/${c.id}`, "DELETE");
+      setCampaigns((current) => current.filter((x) => x.id !== c.id));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Não foi possível excluir.");
     } finally {
-      setUpdating(false);
+      setBusy(false);
     }
   }
-
-  /**
-   * Exclui uma campanha após confirmação do usuário.
-   */
-  async function handleDeleteProject(project: Project) {
-    const confirmed = window.confirm(
-      `Deseja realmente excluir o projeto "${project.name}"?`,
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      setDeleting(true);
-
-      await deleteProject(project.id);
-
-      setProjects((currentProjects) =>
-        currentProjects.filter(
-          (currentProject) => currentProject.id !== project.id,
-        ),
-      );
-    } catch (err) {
-      window.alert(
-        err instanceof Error
-          ? err.message
-          : "Não foi possível excluir o projeto.",
-      );
-    } finally {
-      setDeleting(false);
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="projects-feedback">
-        <div className="loading-spinner" />
-        <p>Carregando campanhas...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="projects-feedback projects-error">
-        <h3>Não foi possível carregar as campanhas</h3>
-        <p>{error}</p>
-      </div>
-    );
-  }
-
+  if (loading) return <p>Carregando suas campanhas…</p>;
   return (
     <>
-      <div className="projects-toolbar">
-        <div className="projects-summary">
-          <strong>{projects.length}</strong>
-
-          <span>
-            {projects.length === 1 ? "campanha" : "campanhas"}
-          </span>
+      {error && (
+        <div role="alert" className={styles["login-error"]}>
+          {error} {!user && <Link href="/login">Entrar</Link>}
         </div>
-
+      )}
+      <div className={styles["projects-toolbar"]}>
+        <p>{campaigns.length} campanhas · suas mesas, suas histórias</p>
         <button
-          className="primary-button"
-          onClick={handleNewProject}
-          disabled={deleting}
+          className={styles["primary-button"]}
+          disabled={busy || !user}
+          onClick={() => {
+            setEditing(null);
+            setShowForm(true);
+          }}
         >
-          + Novo projeto
+          + Nova campanha
         </button>
       </div>
-
       {showForm && (
-        <section className="project-form-card">
-          <div className="project-form-header">
-            <div>
-              <h3>
-                {editingProject
-                  ? "Editar campanha"
-                  : "Novo campanha"}
-              </h3>
-
-              <p>
-                {editingProject
-                  ? "Atualize as informações da campanha."
-                  : "Crie uma campanha para registrar sua aventura."}
-              </p>
-            </div>
-          </div>
-
+        <section className={styles["project-form-card"]}>
+          <h3>{editing ? "Editar campanha" : "Uma nova aventura"}</h3>
           <form
-            className="project-form"
-            onSubmit={
-              editingProject
-                ? handleUpdateProject
-                : handleCreateProject
-            }
+            className={styles["project-form"]}
+            key={editing?.id ?? "new"}
+            onSubmit={submit}
           >
-            <div className="form-field">
-              <label htmlFor="project-name">
-                Nome da campanha
-              </label>
-
+            <div className={styles["form-field"]}>
+              <label htmlFor="campaign-name">Nome da campanha</label>
               <input
-                id="project-name"
-                type="text"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder="Ex.: As Ruínas de Valdris"
+                id="campaign-name"
+                name="name"
                 required
-                disabled={creating || updating}
+                minLength={2}
+                maxLength={150}
+                defaultValue={editing?.name}
               />
             </div>
-
-            <div className="form-field">
-              <label htmlFor="project-description">
-                Descrição
-              </label>
-
+            <div className={styles["form-field"]}>
+              <label htmlFor="campaign-system">Sistema de RPG</label>
+              <input
+                id="campaign-system"
+                name="system"
+                maxLength={100}
+                placeholder="Ex.: D&D 5e, Tormenta20"
+                defaultValue={editing?.system}
+              />
+            </div>
+            <div className={styles["form-field"]}>
+              <label htmlFor="campaign-description">Cenário e premissa</label>
               <textarea
-                id="project-description"
-                value={description}
-                onChange={(event) =>
-                  setDescription(event.target.value)
-                }
-                placeholder="Descreva sua campanha e o cenário da aventura"
+                id="campaign-description"
+                name="description"
                 rows={4}
-                disabled={creating || updating}
+                maxLength={10000}
+                defaultValue={editing?.description ?? ""}
               />
             </div>
-
-            {(createError || editError) && (
-              <div className="login-error">
-                {createError || editError}
-              </div>
-            )}
-
-            <div className="project-form-actions">
+            <div className={styles["project-form-actions"]}>
               <button
+                className={styles["secondary-button"]}
                 type="button"
-                className="secondary-button"
-                onClick={closeForm}
-                disabled={creating || updating}
+                disabled={busy}
+                onClick={() => setShowForm(false)}
               >
                 Cancelar
               </button>
-
-              <button
-                type="submit"
-                className="primary-button"
-                disabled={creating || updating}
-              >
-                {creating
-                  ? "Criando..."
-                  : updating
-                    ? "Salvando..."
-                    : editingProject
-                      ? "Salvar alterações"
-                      : "Criar campanha"}
+              <button className={styles["primary-button"]} disabled={busy}>
+                {busy ? "Salvando…" : "Salvar campanha"}
               </button>
             </div>
           </form>
         </section>
       )}
-
-      {projects.length === 0 ? (
-        <section className="empty-state">
-          <div className="empty-state-icon">⚒</div>
-
-          <h3>Nenhuma campanha encontrada</h3>
-
+      {!campaigns.length && (
+        <div className={styles["empty-state"]}>
+          <h3>Seu diário começa com uma campanha</h3>
           <p>
-            Crie sua primeira campanha para começar a registrar
-            suas aventuras.
+            Crie uma mesa e adicione jogadores para escreverem a história
+            juntos.
           </p>
-
-          <button
-            className="primary-button"
-            onClick={handleNewProject}
-            disabled={deleting}
-          >
-            Criar primeira campanha
-          </button>
-        </section>
-      ) : (
-        <section className="projects-grid">
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onEdit={handleEditProject}
-              onDelete={handleDeleteProject}
-            />
-          ))}
-        </section>
+        </div>
       )}
+      <section className={styles["projects-grid"]}>
+        {campaigns.map((c) => (
+          <article className={styles["project-card"]} key={c.id}>
+            <div className={styles["project-card-content"]}>
+              <span className={styles["journal-eyebrow"]}>
+                {c.system || "Sistema livre"} ·{" "}
+                {c.owner_id === user?.id ? "Mestre" : "Jogador"}
+              </span>
+              <h3>{c.name}</h3>
+              <p>
+                {c.description || "Uma história esperando para ser contada."}
+              </p>
+            </div>
+            <div className={styles["project-card-actions"]}>
+              <Link
+                className={styles["primary-button"]}
+                href={`/journal?campaignId=${c.id}`}
+              >
+                Abrir diário
+              </Link>
+              {c.owner_id === user?.id && (
+                <>
+                  <button
+                    className={styles["project-action-button"]}
+                    disabled={busy}
+                    onClick={() => {
+                      setEditing(c);
+                      setShowForm(true);
+                    }}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className={[
+                      styles["project-action-button"],
+                      styles["project-delete-button"],
+                    ].join(" ")}
+                    disabled={busy}
+                    onClick={() => remove(c)}
+                  >
+                    Excluir
+                  </button>
+                </>
+              )}
+            </div>
+          </article>
+        ))}
+      </section>
     </>
   );
 }

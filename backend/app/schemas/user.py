@@ -16,8 +16,11 @@ class UserBase(BaseModel):
 """
 Dados necessários para criar um novo usuário.
 """
-class UserCreate(UserBase):
-    
+class UserCreate(BaseModel):
+    email: EmailStr
+    # Preserve compatibility with existing clients; the book only asks for email/password.
+    name: str | None = Field(default=None, min_length=2, max_length=100)
+
     password: str = Field(
         min_length=8,
         max_length=128,

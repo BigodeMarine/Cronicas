@@ -4,6 +4,7 @@ from app.models.project_member import ProjectMember
 from app.models.task import Task
 from app.models.comment import Comment
 from app.models.notification import Notification
+from app.models.journal import CampaignSession, JournalEntry, EntryComment
 
 __all__ = [
     "User",
@@ -12,4 +13,7 @@ __all__ = [
     "Task",
     "Comment",
     "Notification",
+    "CampaignSession",
+    "JournalEntry",
+    "EntryComment",
 ]
