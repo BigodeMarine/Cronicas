@@ -7,11 +7,12 @@ from app.api.routes.tasks import router as tasks_router
 from app.api.routes.comments import router as comments_router
 from app.api.routes.notifications import router as notifications_router
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.routes.campaigns import router as campaigns_router
 
 # Cria a instância principal da aplicação FastAPI.
 app = FastAPI(
     title=settings.app_name,
-    description="API para gerenciamento de projetos e tarefas.",
+    description="Diário de RPG compartilhado: campanhas, sessões e relatos da mesa.",
     version=settings.app_version,
 )
 
@@ -32,6 +33,7 @@ app.include_router(project_members_router)
 app.include_router(tasks_router)
 app.include_router(comments_router)
 app.include_router(notifications_router)
+app.include_router(campaigns_router)
 
 @app.get("/")
 def root():

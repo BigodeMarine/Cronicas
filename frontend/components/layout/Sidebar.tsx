@@ -4,11 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const menuItems = [
-  { label: "Início", href: "/" },
+  { label: "Início", href: "/home" },
   { label: "Campanhas", href: "/projects" },
-  { label: "Acontecimentos", href: "/tasks" },
-  { label: "Participantes", href: "/members" },
-  { label: "Notificações", href: "/notifications" },
+  { label: "Diário da mesa", href: "/journal" },
 ];
 
 export default function Sidebar() {

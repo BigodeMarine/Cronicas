@@ -25,7 +25,7 @@ def create_user(
 ) -> User:
 
     user = User(
-        name=user_data.name,
+        name=user_data.name or (str(user_data.email).split("@", 1)[0][:100].ljust(2, "_")),
         email=str(user_data.email).lower(),
         password_hash=hash_password(user_data.password),
     )
@@ -35,4 +35,3 @@ def create_user(
     db.refresh(user)
 
     return user
-

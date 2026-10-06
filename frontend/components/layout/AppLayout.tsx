@@ -1,31 +1,8 @@
 "use client";
-
-import { usePathname } from "next/navigation";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
-
-interface AppLayoutProps {
-  children: React.ReactNode;
-}
-
-export default function AppLayout({ children }: AppLayoutProps) {
+import { usePathname } from 'next/navigation';
+import DiaryBookShell from '@/components/book/DiaryBookShell';
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-
-  if (pathname === "/") {
-    return <>{children}</>;
-  }
-
-  return (
-    <div className="app-layout">
-      <Sidebar />
-
-      <div className="main-area">
-        <Header />
-
-        <main className="main-content">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
+  if (['/', '/login', '/register'].includes(pathname)) return <>{children}</>;
+  return <DiaryBookShell>{children}</DiaryBookShell>;
 }
