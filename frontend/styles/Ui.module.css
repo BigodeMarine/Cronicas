@@ -296,3 +296,7 @@
 .journal-eyebrow, .journal-meta, .member-role { font-size: var(--font-size-sm); }
 .journal-entry h3, .project-card h3, .empty-state h3 { font-size: clamp(1.8rem, 3vw, 2.6rem); }
 @media (max-width: 600px) { .journal-tabs { gap: 8px; } .journal-tabs > button { flex: 1 1 auto; } .projects-toolbar .form-field { width: 100%; min-width: 0; } }
+
+@media (min-width: 1200px) {
+  .journal-page { max-width: none; }
+}

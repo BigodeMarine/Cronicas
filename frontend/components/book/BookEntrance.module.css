@@ -153,3 +153,22 @@
 }
 .dedication-sigil { flex: 0 0 auto; width: 150px; height: 150px; color: #95794a; margin: 32px 0 28px; }
 .phase-closed .rpg-book-cover:hover { box-shadow: inset 0 0 35px #000b, inset 0 0 0 9px #8d744b44, 9px 7px 0 #bda885, 16px 12px 0 #685337, 20px 35px 40px #0009; }
+
+/* Let the physical book occupy more of a desktop monitor. */
+@media (min-width: 1200px) {
+  .entrance-book {
+    --closed-book-width: clamp(460px, 32vw, 680px);
+    width: var(--closed-book-width);
+    height: calc(var(--closed-book-width) * 1.435);
+  }
+  .rpg-book-cover { width: 100%; height: 100%; }
+  .entrance-book.is-open {
+    width: min(1600px, calc(100vw - 96px));
+    min-height: clamp(800px, calc(100svh - 180px), 1100px);
+  }
+  .auth-spread { min-height: clamp(800px, calc(100svh - 180px), 1100px); }
+  .auth-page { padding: 56px clamp(48px, 5vw, 100px) 72px; }
+  .cover-sigil { width: clamp(188px, 12vw, 260px); height: clamp(188px, 12vw, 260px); }
+  .metalCorner { width: clamp(80px, 5vw, 110px); height: clamp(80px, 5vw, 110px); }
+  .phase-opening .rpg-book-cover { width: 50%; }
+}

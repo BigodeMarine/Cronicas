@@ -58,3 +58,13 @@
  .diary-index-nav a { font-size: var(--font-size-sm); }
  .diary-index-bottom { padding-top: 16px; }
 }
+
+@media (min-width: 1200px) {
+  .diary-desk { padding-inline: 48px; }
+  .diary-bound-book {
+    max-width: 1800px;
+    min-height: max(800px, calc(100svh - 150px));
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
+  .diary-desk-caption { max-width: 1800px; }
+}
