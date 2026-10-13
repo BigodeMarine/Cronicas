@@ -32,3 +32,5 @@ node_modules/
 out/
 # Armazenamento privado local do cofre
 .local/
+.vercel
+.env*
