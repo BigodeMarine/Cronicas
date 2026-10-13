@@ -30,3 +30,5 @@ Thumbs.db
 node_modules/
 .next/
 out/
+# Armazenamento privado local do cofre
+.local/

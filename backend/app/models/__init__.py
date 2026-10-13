@@ -16,4 +16,10 @@ __all__ = [
     "CampaignSession",
     "JournalEntry",
     "EntryComment",
+    "Character",
+    "CharacterParticipation",
+    "CharacterFile",
+    "CharacterNote",
 ]
+
+from app.models.character import Character, CharacterParticipation, CharacterFile, CharacterNote

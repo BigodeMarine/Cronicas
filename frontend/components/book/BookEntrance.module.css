@@ -796,6 +796,10 @@
   }
 }
 
+@media (min-width: 2560px) {
+  .entrance-book.is-open { width: 80vw; }
+}
+
 /* Keep the title inside the actual cover, including 375px phones. */
 .cover-title {
   max-width: 100%;

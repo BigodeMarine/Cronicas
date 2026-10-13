@@ -20,6 +20,8 @@ class Project(Base):
     sessions = relationship("CampaignSession", back_populates="project", cascade="all, delete-orphan")
     entries = relationship("JournalEntry", back_populates="project", cascade="all, delete-orphan")
 
+    character_participations = relationship("CharacterParticipation", back_populates="project", cascade="all, delete-orphan")
+
     id: Mapped[int] = mapped_column(
         primary_key=True,
     )
