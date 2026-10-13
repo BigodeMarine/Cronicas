@@ -8,6 +8,7 @@ from app.api.routes.comments import router as comments_router
 from app.api.routes.notifications import router as notifications_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes.campaigns import router as campaigns_router
+from app.api.routes.characters import router as characters_router
 
 # Cria a instância principal da aplicação FastAPI.
 app = FastAPI(
@@ -34,6 +35,7 @@ app.include_router(tasks_router)
 app.include_router(comments_router)
 app.include_router(notifications_router)
 app.include_router(campaigns_router)
+app.include_router(characters_router)
 
 @app.get("/")
 def root():

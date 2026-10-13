@@ -81,6 +81,12 @@ export default function DiaryBookShell({
             >
               <span>02</span> Campanhas
             </Link>
+            <Link
+              href="/characters"
+              aria-current={pathname.startsWith("/characters") ? "page" : undefined}
+            >
+              <span>03</span> Meus personagens
+            </Link>
           </nav>
           <div className={styles["diary-index-bottom"]}>
             <p>
@@ -99,7 +105,9 @@ export default function DiaryBookShell({
         >
           <div className={styles["diary-running-title"]}>
             <span>
-              {pathname === "/projects"
+              {pathname.startsWith("/characters")
+                ? "As vidas que interpretamos"
+                : pathname === "/projects"
                 ? "Os mundos que habitamos"
                 : "As histórias que escrevemos"}
             </span>
@@ -121,4 +129,5 @@ export default function DiaryBookShell({
       </div>
     </main>
   );
+
 }

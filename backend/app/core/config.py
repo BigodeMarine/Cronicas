@@ -1,3 +1,4 @@
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 """
@@ -7,6 +8,8 @@ class Settings(BaseSettings):
     app_name: str = "ForgeHub API"
     app_version: str = "1.0.0"
     debug: bool = False
+
+    character_storage_dir: Path = Path(".local/character-vault")
 
     database_url: str
 

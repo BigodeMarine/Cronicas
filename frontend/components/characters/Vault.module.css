@@ -1,0 +1,57 @@
+.vault { min-width: 0; color: var(--ink); }
+.vault h2 { font: clamp(2rem, 3vw, 2.75rem)/1.2 var(--font-heading); margin: 12px 0 20px; overflow-wrap: anywhere; }
+.vault h3, .modal h2 { font: clamp(1.6rem, 3vw, 2.2rem)/1.3 var(--font-heading); margin: 12px 0 20px; overflow-wrap: anywhere; }
+.vault h4 { font: 1.5rem/1.4 var(--font-heading); margin: 16px 0; overflow-wrap: anywhere; }
+.vault p { line-height: 1.65; overflow-wrap: anywhere; }
+.header { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; margin: 24px 0; }
+.header > div { min-width: 0; flex: 1 1 260px; }
+.kicker { font-size: var(--font-size-sm); text-transform: uppercase; color: var(--muted-ink); letter-spacing: .08em; }
+.privacy { border-left: 3px solid var(--color-action); padding: 12px 16px; background: #3445360d; font-size: var(--font-size-sm); }
+.primary, .secondary, .danger { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 16px; cursor: pointer; border: 1px solid var(--color-border); border-radius: 5px; font-size: var(--font-size-md); text-decoration: none; max-width: 100%; overflow-wrap: anywhere; }
+.primary { background: var(--color-action); color: var(--color-text-light); border-color: var(--color-action); }
+.primary:hover { background: var(--color-action-hover); }
+.secondary { background: transparent; color: var(--color-action); }
+.danger { color: var(--color-danger); background: transparent; }
+.filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: end; gap: 16px; margin: 28px 0; }
+.filters label, .form label { display: grid; gap: 8px; font-size: var(--font-size-md); min-width: 0; }
+.filters input, .filters select, .form input, .form select, .form textarea { width: 100%; min-width: 0; padding: 12px; border: 1px solid var(--color-border); border-radius: 5px; background: #fff8e750; color: var(--ink); font: inherit; }
+.filters select, .form select { appearance: none; }
+.form { display: grid; gap: 18px; margin: 24px 0; min-width: 0; }
+.form input[type=file] { padding: 8px; font-size: var(--font-size-sm); }
+.form input[type=file]::file-selector-button { background: var(--color-action); color: var(--color-text-light); padding: 8px; border: 0; border-radius: 3px; cursor: pointer; margin-right: 8px; }
+.form textarea { resize: vertical; }
+.form > button { justify-self: start; }
+.cards { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); margin: 28px 0; }
+.card { border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; background: #fff8e730; min-width: 0; }
+.card > div:last-child { padding: 20px; }
+.card h3 { overflow-wrap: anywhere; }
+.portrait { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: radial-gradient(ellipse at center, var(--color-action-hover), var(--color-action)); color: var(--color-metal); aspect-ratio: 1; min-width: 0; }
+.portrait img { object-fit: cover; width: 100%; height: 100%; }
+.portrait svg { width: 45%; max-width: 160px; }
+.portrait span { font-size: var(--font-size-sm); text-align: center; }
+.badge { display: inline-block; background: var(--color-comment-surface); color: var(--color-action); padding: 4px 12px; border: 1px solid var(--color-border); border-radius: 20px; font-size: var(--font-size-sm); }
+.characterHeader { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 28px; margin: 32px 0; align-items: start; }
+.characterHeader .portrait { border-radius: 6px; overflow: hidden; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.section, .participation { padding: 24px; margin: 28px 0; border: 1px solid var(--color-border); border-radius: 6px; background: #fff8e725; min-width: 0; }
+.participation > .header { margin-top: 0; }
+.files { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.fileSlot { border: 1px solid var(--color-border); padding: 20px; border-radius: 6px; min-width: 0; margin: 20px 0; }
+.fileSlot h3 { font-size: 1.6rem; }
+.notes { display: grid; gap: 20px; }
+.note { padding: 20px; border-left: 3px solid var(--color-action); background: var(--color-comment-surface); min-width: 0; }
+.prose { white-space: pre-wrap; overflow-wrap: anywhere; font: var(--font-size-lg)/1.8 var(--font-heading); }
+.muted { font-size: var(--font-size-sm); color: var(--muted-ink); }
+.error { color: var(--color-danger); background: #f7ded5; padding: 16px; border-radius: 4px; overflow-wrap: anywhere; }
+.success { color: var(--color-action); padding: 14px; background: #34453612; border-radius: 4px; }
+.empty { text-align: center; padding: 40px 24px; border: 1px dashed var(--color-border); border-radius: 8px; }
+.pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; margin: 28px 0; font-size: var(--font-size-sm); }
+.modal { width: min(650px, calc(100vw - 32px)); max-height: calc(100svh - 40px); overflow-y: auto; padding: 32px; border: 6px solid var(--color-action); border-radius: 8px; background: var(--paper); color: var(--ink); }
+.modal::backdrop { background: #111c17bd; }
+@media (max-width: 1100px) { .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .files { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .filters { grid-template-columns: 1fr; } .characterHeader { grid-template-columns: 1fr; } .characterHeader .portrait { width: min(100%, 200px); } .section, .participation, .fileSlot { padding: 16px; } .modal { padding: 20px; } .header { gap: 12px; } .primary, .secondary, .danger { font-size: var(--font-size-sm); } }
+.picker { position: relative; display: grid; gap: 12px; min-width: 0; }
+.picker label { font-size: var(--font-size-md); }
+.hiddenFile { position: absolute; width: 1px; height: 1px; padding: 0 !important; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.fileChoice { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; min-width: 0; }
+.fileChoice span { color: var(--muted-ink); font-size: var(--font-size-sm); overflow-wrap: anywhere; }
