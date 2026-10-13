@@ -1,0 +1,118 @@
+name: CI / CD
+
+on:
+  pull_request:
+    branches: [main, diario-rpg]
+  push:
+    branches: [main, diario-rpg]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-cd-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend / lint, tipos e build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npx --no-install tsc --noEmit
+      - run: npm run build
+
+  backend:
+    name: Backend / testes e migrações
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@127.0.0.1:5432/cronicas_ci
+      JWT_SECRET_KEY: ci-only-key-not-for-production
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cronicas_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d cronicas_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install poetry==2.4.1
+      - run: poetry check --lock
+      - run: poetry install --no-root --no-interaction
+      - name: Testes isolados
+        run: poetry run python -m pytest -q tests
+        env:
+          DATABASE_URL: sqlite://
+      - run: poetry run alembic upgrade head
+      - run: poetry run alembic check
+
+  deploy:
+    name: Deploy / Vercel
+    needs: [frontend, backend]
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/diario-rpg') &&
+      vars.ENABLE_VERCEL_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      DEPLOY_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+      DEPLOY_BRANCH: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar credenciais
+        shell: bash
+        run: |
+          for variable in VERCEL_ORG_ID VERCEL_PROJECT_ID VERCEL_TOKEN; do
+            if [[ -z "${!variable}" ]]; then
+              echo "::error::Configure o secret $variable no GitHub."
+              exit 1
+            fi
+          done
+      - name: Instalar Vercel CLI
+        run: npm install --global vercel@63.1.2
+      - name: Carregar configuração e variáveis da Vercel
+        run: vercel pull --yes --environment="$DEPLOY_ENVIRONMENT" --git-branch="$DEPLOY_BRANCH" --token="$VERCEL_TOKEN"
+      - name: Build e deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          flags=()
+          if [[ "$DEPLOY_ENVIRONMENT" == "production" ]]; then
+            flags+=(--prod)
+          fi
+          vercel build "${flags[@]}" --token="$VERCEL_TOKEN"
+          url=$(vercel deploy --prebuilt "${flags[@]}" --token="$VERCEL_TOKEN")
+          echo "### Deploy Vercel ($DEPLOY_ENVIRONMENT)" >> "$GITHUB_STEP_SUMMARY"
+          echo "$url" >> "$GITHUB_STEP_SUMMARY"

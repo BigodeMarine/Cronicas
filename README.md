@@ -35,7 +35,15 @@ Para contas novas, o nome de autoria é gerado a partir da parte do e-mail antes
 
 Em `backend`: `poetry run python -m pytest -q tests`. Os testes usam banco SQLite isolado, com chaves estrangeiras habilitadas, e exercitam autenticação real, participação, moderação e isolamento entre campanhas; não alteram o banco de desenvolvimento. As migrações devem ser aplicadas também ao PostgreSQL.
 
-Em `frontend`: `npm run build` valida a compilação e TypeScript; `npm run lint` verifica as regras React. Existem erros anteriores em `components/tasks/TasksContent.tsx`, da tela legada de tarefas.
+Em `frontend`: `npm run build` valida a compilação e TypeScript; `npm run lint` verifica as regras React. O carregamento da tela legada de tarefas usa o resultado assíncrono da API e os membros já carregados, sem atualizações síncronas de estado em efeitos ou consultas duplicadas ao trocar de campanha.
+
+## CI/CD e Vercel
+
+O workflow [CI / CD](.github/workflows/ci-cd.yml) executa lint, TypeScript, build, testes do backend e migrações em PostgreSQL em pushes e pull requests para `main` e `diario-rpg`.
+
+O deploy do frontend na Vercel depende do CI passar e da variável GitHub `ENABLE_VERCEL_DEPLOY=true`: `main` publica produção e `diario-rpg` gera preview. Configure os secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID` e `VERCEL_PROJECT_ID` no GitHub. Na Vercel, use Root Directory `frontend`, Node.js 22 e `API_INTERNAL_URL` com a URL HTTPS da API em Production e Preview.
+
+A API, o PostgreSQL e o volume privado dos anexos são hospedados separadamente. O workflow não publica a API nem executa migrações no banco de produção. Veja o [guia de configuração e deploy](docs/DEPLOY.md) para os passos completos e o rollback.
 
 ## Estilos e tipografia
 
@@ -115,6 +123,6 @@ npx tsc --noEmit
 npm run build
 ```
 
-Os testes do cofre usam SQLite com chaves estrangeiras habilitadas e armazenamento em pastas temporárias. Exercitam isolamento inclusive nos downloads, vínculos/permissões, privacidade de anotações, fichas independentes, validação de arquivos, limpeza em falhas/substituições/cascatas e CRUD. O lint global ainda acusa os dois problemas preexistentes de efeitos React na tela legada `components/tasks/TasksContent.tsx`; os componentes do cofre não desabilitam essas regras.
+Os testes do cofre usam SQLite com chaves estrangeiras habilitadas e armazenamento em pastas temporárias. Exercitam isolamento inclusive nos downloads, vínculos/permissões, privacidade de anotações, fichas independentes, validação de arquivos, limpeza em falhas/substituições/cascatas e CRUD. O lint global passa, incluindo a tela legada de tarefas; as regras React continuam habilitadas.
 
 Esta primeira versão não inclui compartilhamento de fichas, múltiplas versões de um mesmo anexo, sincronização com VTTs, fichas estruturadas, rolagens ou cálculos de sistema.

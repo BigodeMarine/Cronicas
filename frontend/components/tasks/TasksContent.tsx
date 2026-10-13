@@ -37,7 +37,6 @@ export default function TasksContent() {
     null,
   );
   const [assigneeId, setAssigneeId] = useState<number | null>(null);
-  const [members, setMembers] = useState<ProjectMember[]>([]);
   const [projectMembers, setProjectMembers] = useState<
     Record<number, ProjectMember[]>
   >({});
@@ -49,77 +48,44 @@ export default function TasksContent() {
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
-  /**
-   * Busca as campanhas do usuário e carrega os acontecimentos de cada campanha.
-   */
-  async function loadTasks() {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const projects = await getProjects();
-
-      const results = await Promise.all(
-        projects.map(async (project) => {
-          const [tasks, membersData] = await Promise.all([
-            getTasks(project.id),
-            getProjectMembers(project.id),
-          ]);
-
-          setProjectMembers((current) => ({
-            ...current,
-            [project.id]: membersData,
-          }));
-
-          return {
-            project,
-            tasks,
-          };
-        }),
-      );
-
-      setProjectTasks(results);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Não foi possível carregar os acontecimentos.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    loadTasks();
-  }, []);
+    let active = true;
 
-  useEffect(() => {
-    if (!selectedProjectId) {
-      setMembers([]);
-      return;
-    }
-
-    const projectId = selectedProjectId;
-
-    async function loadMembers() {
+    async function loadTasks() {
       try {
-        const data = await getProjectMembers(projectId);
-
-        setMembers(data);
-
-        setProjectMembers((current) => ({
-          ...current,
-          [projectId]: data,
-        }));
+        const projects = await getProjects();
+        const results = await Promise.all(
+          projects.map(async (project) => {
+            const [tasks, members] = await Promise.all([
+              getTasks(project.id),
+              getProjectMembers(project.id),
+            ]);
+            return { project, tasks, members };
+          }),
+        );
+        if (!active) return;
+        setProjectMembers(
+          Object.fromEntries(results.map(({ project, members }) => [project.id, members])),
+        );
+        setProjectTasks(results.map(({ project, tasks }) => ({ project, tasks })));
       } catch (err) {
-        console.error(err);
-        setMembers([]);
+        if (active) {
+          setError(
+            err instanceof Error ? err.message : "Não foi possível carregar os acontecimentos.",
+          );
+        }
+      } finally {
+        if (active) setLoading(false);
       }
     }
 
-    loadMembers();
-  }, [selectedProjectId]);
+    void loadTasks();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const members = selectedProjectId ? projectMembers[selectedProjectId] ?? [] : [];
 
   /**
    * Abre o formulário para criação de um novo acontecimento.
