@@ -16,6 +16,14 @@ from sqlalchemy import event, select
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.models.character import CharacterFile
+from io import BytesIO
+from typing import BinaryIO
+from uuid import uuid4
+
+import re
+from httpx import HTTPError
+from storage3.exceptions import StorageApiError
+from supabase import create_client
 
 logger = logging.getLogger(__name__)
 
@@ -61,11 +69,111 @@ class LocalFileStorage:
         self._path(key).unlink(missing_ok=True)
 
 
+class SupabaseFileStorage:
+    """Armazena anexos privados mantendo a interface do armazenamento local."""
+
+    def __init__(self, url: str, service_role_key: str, bucket: str):
+        self.bucket = create_client(url, service_role_key).storage.from_(bucket)
+
+    @staticmethod
+    def _validate_key(key: str) -> None:
+        # Aceita somente os nomes internos gerados pela aplicação.
+        if not re.fullmatch(r"[0-9a-f]{32}\.(png|jpg|pdf)", key):
+            raise ValueError("Chave de armazenamento inválida.")
+
+    def write(self, data: bytes, extension: str) -> str:
+        media_types = {
+            "png": "image/png",
+            "jpg": "image/jpeg",
+            "pdf": "application/pdf",
+        }
+        if extension not in media_types:
+            raise ValueError("Extensão de armazenamento inválida.")
+
+        key = f"{uuid4().hex}.{extension}"
+
+        try:
+            self.bucket.upload(
+                path=key,
+                file=data,
+                file_options={
+                    "content-type": media_types[extension],
+                    "upsert": "false",
+                },
+            )
+        except (StorageApiError, HTTPError):
+            raise HTTPException(
+                status_code=503,
+                detail="Não foi possível salvar o arquivo no cofre.",
+            ) from None
+
+        return key
+
+    def open(self, key: str) -> BinaryIO:
+        self._validate_key(key)
+
+        try:
+            data = self.bucket.download(key)
+        except StorageApiError as exc:
+            if str(exc.status) == "404":
+                # A rota existente converte arquivo ausente em resposta 404.
+                raise FileNotFoundError("Arquivo não encontrado.") from None
+            raise HTTPException(
+                status_code=503,
+                detail="O armazenamento do cofre está indisponível.",
+            ) from None
+        except HTTPError:
+            raise HTTPException(
+                status_code=503,
+                detail="Não foi possível acessar o armazenamento do cofre.",
+            ) from None
+
+        return BytesIO(data)
+
+    def delete(self, key: str) -> None:
+        self._validate_key(key)
+
+        try:
+            self.bucket.remove([key])
+        except StorageApiError as exc:
+            if str(exc.status) == "404":
+                return
+            raise HTTPException(
+                status_code=503,
+                detail="Não foi possível excluir o arquivo do cofre.",
+            ) from None
+        except HTTPError:
+            raise HTTPException(
+                status_code=503,
+                detail="Não foi possível acessar o armazenamento do cofre.",
+            ) from None
+
 def get_character_storage() -> PrivateFileStorage:
+    """Seleciona o armazenamento sem alterar as permissões das rotas."""
+    if settings.character_storage_backend == "supabase":
+        if (
+            not settings.supabase_url
+            or not settings.supabase_service_role_key
+            or not settings.supabase_storage_bucket
+        ):
+            raise HTTPException(
+                status_code=503,
+                detail="Configure o armazenamento privado do Supabase.",
+            )
+
+        return SupabaseFileStorage(
+            url=settings.supabase_url,
+            service_role_key=settings.supabase_service_role_key.get_secret_value(),
+            bucket=settings.supabase_storage_bucket,
+        )
+
     try:
         return LocalFileStorage(settings.character_storage_dir)
     except ValueError:
-        raise HTTPException(503, "Configure uma pasta privada para o armazenamento do cofre.")
+        raise HTTPException(
+            status_code=503,
+            detail="Configure uma pasta privada para o armazenamento do cofre.",
+        ) from None
 
 
 def validate_upload(data: bytes, filename: str, declared_type: str | None, portrait: bool):

@@ -1,6 +1,7 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from typing import Literal
+from pydantic import SecretStr
 """
 Centraliza as configurações da aplicação.
 """
@@ -10,6 +11,12 @@ class Settings(BaseSettings):
     debug: bool = False
 
     character_storage_dir: Path = Path(".local/character-vault")
+    # Usa armazenamento local nos testes e Supabase quando configurado.
+    character_storage_backend: Literal["local", "supabase"] = "local"
+
+    supabase_url: str | None = None
+    supabase_service_role_key: SecretStr | None = None
+    supabase_storage_bucket: str = "character-vault"
 
     database_url: str
 
