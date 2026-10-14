@@ -103,16 +103,11 @@ jobs:
       - name: Instalar Vercel CLI
         run: npm install --global vercel@63.1.2
       - name: Carregar configuração e variáveis da Vercel
-        run: vercel pull --yes --environment="$DEPLOY_ENVIRONMENT" --git-branch="$DEPLOY_BRANCH" --token="$VERCEL_TOKEN"
-      - name: Build e deploy
         shell: bash
         run: |
           set -euo pipefail
           flags=()
-          if [[ "$DEPLOY_ENVIRONMENT" == "production" ]]; then
-            flags+=(--prod)
+          if [[ "$DEPLOY_ENVIRONMENT" == "preview" ]]; then
+            flags+=(--git-branch="$DEPLOY_BRANCH")
           fi
-          vercel build "${flags[@]}" --token="$VERCEL_TOKEN"
-          url=$(vercel deploy --prebuilt "${flags[@]}" --token="$VERCEL_TOKEN")
-          echo "### Deploy Vercel ($DEPLOY_ENVIRONMENT)" >> "$GITHUB_STEP_SUMMARY"
-          echo "$url" >> "$GITHUB_STEP_SUMMARY"
+          vercel pull --yes --environment="$DEPLOY_ENVIRONMENT" "${flags[@]}" --token="$VERCEL_TOKEN"
