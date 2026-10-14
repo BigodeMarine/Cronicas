@@ -6,7 +6,8 @@
 
 **Projeto desenvolvido como trabalho freelance.** Uma aplicação web para mesas de RPG, com diário compartilhado de campanhas, sessões e relatos, além de um cofre privado de personagens.
 
-A experiência é inspirada em um grimório: capa interativa, páginas de pergaminho, encadernação e detalhes dourados. Mestres e jogadores registram as diferentes perspectivas da mesma aventura.
+A experiência é inspirada em um grimório: capa interativa, páginas de pergaminho, encadernação e detalhes dourados. Mestres e jogadores registram as diferentes perspectivas da mesma aventura.  
+Quer experimentar? crie uma conta é bem simples e fácil.
 
 ## ✦ Funcionalidades
 
