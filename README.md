@@ -123,4 +123,4 @@ O frontend está disponível em **[cronicas-beta.vercel.app](https://cronicas-be
 
 ---
 
-**Crônicas · Trabalho freelance · O registro de suas aventuras**
+<p align="center">Feito com ☕, Python e um pouco de dados.</p>  
