@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+[**Acessar o deploy — Crônicas**](https://cronicas-beta.vercel.app)
 
-## Getting Started
+# Frontend · Crônicas
 
-First, run the development server:
+Interface de um **trabalho freelance**, desenvolvida com Next.js, React, TypeScript e CSS Modules. A identidade visual combina verde escuro, dourado e pergaminho em um diário de RPG interativo.
+
+A apresentação e a paleta estão no [README do projeto](../README.md). Consulte também o [guia de desenvolvimento](../docs/DEVELOPMENT.md) e o [guia de deploy](../docs/DEPLOY.md).
+
+## Executar
+
+Com Node.js 22 e a API disponível em `http://127.0.0.1:8001`:
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [localhost:3000](http://localhost:3000). O Next.js encaminha `/api` para o backend; `API_INTERNAL_URL` permite configurar outro destino.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Validar
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npx --no-install tsc --noEmit
+npm run build
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Os tokens visuais ficam em `app/globals.css`, o reset em `styles/Base.module.css` e os controles compartilhados em `styles/Ui.module.css`. A capa usa CSS e SVG inline; não depende de uma pasta `public`.

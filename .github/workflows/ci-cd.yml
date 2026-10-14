@@ -111,3 +111,22 @@ jobs:
             flags+=(--git-branch="$DEPLOY_BRANCH")
           fi
           vercel pull --yes --environment="$DEPLOY_ENVIRONMENT" "${flags[@]}" --token="$VERCEL_TOKEN"
+      - name: Compilar para a Vercel
+        shell: bash
+        run: |
+          set -euo pipefail
+          flags=()
+          if [[ "$DEPLOY_ENVIRONMENT" == "production" ]]; then
+            flags+=(--prod)
+          fi
+          vercel build "${flags[@]}" --token="$VERCEL_TOKEN"
+      - name: Publicar na Vercel
+        shell: bash
+        run: |
+          set -euo pipefail
+          flags=()
+          if [[ "$DEPLOY_ENVIRONMENT" == "production" ]]; then
+            flags+=(--prod)
+          fi
+          deployment_url=$(vercel deploy --prebuilt "${flags[@]}" --token="$VERCEL_TOKEN")
+          echo "Deploy: $deployment_url" >> "$GITHUB_STEP_SUMMARY"

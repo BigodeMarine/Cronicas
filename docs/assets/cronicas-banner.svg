@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">Crônicas — O registro de suas aventuras</title>
+  <desc id="desc">Banner verde escuro com moldura e ornamentos dourados, inspirado no grimório do projeto.</desc>
+  <rect width="1200" height="320" rx="16" fill="#111c17"/>
+  <rect x="18" y="18" width="1164" height="284" rx="10" fill="#1c2c24" stroke="#d7b16b" stroke-width="2"/>
+  <rect x="30" y="30" width="1140" height="260" rx="6" fill="none" stroke="#a48247"/>
+  <g fill="none" stroke="#d7b16b" stroke-width="2">
+    <path d="M600 50 630 67 630 101 600 118 570 101 570 67Z M600 50 585 92 630 101 M570 101 615 92 600 50 M570 67 630 67 600 118Z"/>
+    <path d="M300 226H520 M680 226H900"/>
+  </g>
+  <text x="600" y="190" text-anchor="middle" fill="#d7b16b" font-family="Georgia,serif" font-size="62" letter-spacing="8">CRÔNICAS</text>
+  <text x="600" y="234" text-anchor="middle" fill="#d7b16b" font-family="Georgia,serif" font-size="24">✦</text>
+  <text x="600" y="270" text-anchor="middle" fill="#f3e7c9" font-family="Georgia,serif" font-size="22">O registro de suas aventuras</text>
+</svg>
